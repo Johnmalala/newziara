@@ -14,6 +14,10 @@ const SignUpPage: React.FC = () => {
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+
+    // This will create the user in `auth.users` and store `full_name` in the metadata.
+    // A database trigger should be used to automatically create a corresponding
+    // entry in the `public.profiles` table.
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -28,20 +32,8 @@ const SignUpPage: React.FC = () => {
     if (error) {
       toast.error(error.message);
     } else if (data.user) {
-      // Also insert into profiles table
-      const { error: profileError } = await supabase.from('profiles').insert({
-        id: data.user.id,
-        full_name: fullName,
-        email: email,
-        role: 'user'
-      });
-
-      if (profileError) {
-        toast.error(profileError.message);
-      } else {
-        toast.success('Account created! Please check your email for verification.');
-        navigate('/login');
-      }
+      toast.success('Account created! Please check your email for verification.');
+      navigate('/login');
     }
     setLoading(false);
   };

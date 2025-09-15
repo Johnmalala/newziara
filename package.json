@@ -13,13 +13,13 @@
     "@faker-js/faker": "^10.0.0",
     "@supabase/supabase-js": "^2.57.4",
     "axios": "^1.9.0",
-    "date-fns": "^4.1.0",
+    "date-fns": "^3.6.0",
     "framer-motion": "^12.23.12",
     "lucide-react": "^0.511.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-hot-toast": "^2.6.0",
-    "react-router-dom": "^7.9.1"
+    "react-router-dom": "^6.25.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.27.0",
