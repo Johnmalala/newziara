@@ -1,14 +1,16 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { LayoutDashboard, List, Settings, LogOut, MapPin } from 'lucide-react';
+import { LayoutDashboard, List, Settings, LogOut, MapPin, BookUser, Package } from 'lucide-react';
 
 const Sidebar: React.FC = () => {
   const { signOut, profile } = useAuth();
 
   const navLinks = [
-    { to: '/admin', icon: LayoutDashboard, text: 'Dashboard' },
+    { to: '/admin/dashboard', icon: LayoutDashboard, text: 'Dashboard' },
     { to: '/admin/listings', icon: List, text: 'Listings' },
+    { to: '/admin/bookings', icon: BookUser, text: 'Bookings' },
+    { to: '/admin/requests', icon: Package, text: 'Requests' },
     { to: '/admin/settings', icon: Settings, text: 'Site Settings' },
   ];
 
@@ -23,7 +25,6 @@ const Sidebar: React.FC = () => {
           <NavLink
             key={link.text}
             to={link.to}
-            end={link.to === '/admin'}
             className={({ isActive }) =>
               `flex items-center px-4 py-2 rounded-lg transition-colors duration-200 ${
                 isActive ? 'bg-red-600 text-white' : 'hover:bg-gray-700'

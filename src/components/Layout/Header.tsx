@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, User, MapPin, LogOut } from 'lucide-react';
+import { Menu, X, User, MapPin, LogOut, LayoutDashboard } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext';
 
@@ -57,8 +57,12 @@ const Header: React.FC = () => {
                   <span className="font-medium text-sm">{profile?.full_name || 'Account'}</span>
                 </button>
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                  <Link to="/dashboard" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
+                    <LayoutDashboard className="h-4 w-4 mr-2" />
+                    My Dashboard
+                  </Link>
                   {isAdmin && (
-                    <Link to="/admin" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Admin Dashboard</Link>
+                    <a href={`//admin.${window.location.host}`} target="_blank" rel="noopener noreferrer" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Admin Portal</a>
                   )}
                   <button onClick={signOut} className="w-full text-left flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                     <LogOut className="h-4 w-4 mr-2" />
@@ -124,8 +128,9 @@ const Header: React.FC = () => {
                 <div className="flex flex-col space-y-2 pt-4 border-t border-gray-200">
                   {session ? (
                      <>
+                      <Link to="/dashboard" onClick={() => setIsMenuOpen(false)} className="text-gray-700 hover:text-red-600 font-medium py-2 px-3">My Dashboard</Link>
                       {isAdmin && (
-                        <Link to="/admin" onClick={() => setIsMenuOpen(false)} className="text-gray-700 hover:text-red-600 font-medium py-2 px-3">Admin Dashboard</Link>
+                        <a href={`//admin.${window.location.host}`} target="_blank" rel="noopener noreferrer" onClick={() => setIsMenuOpen(false)} className="text-gray-700 hover:text-red-600 font-medium py-2 px-3">Admin Portal</a>
                       )}
                       <button onClick={() => { signOut(); setIsMenuOpen(false); }} className="text-left text-gray-700 hover:text-red-600 font-medium py-2 px-3">
                         Sign Out

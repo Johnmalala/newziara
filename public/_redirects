@@ -1,6 +1,1 @@
-# Rewrites the admin subdomain to the /admin path of your app
-# Replace 'admin.yourdomain.com' with your actual admin subdomain
-https://admin.yourdomain.com/*  /admin/:splat  200
-
-# SPA fallback to ensure React Router handles all other navigation
 /*    /index.html   200

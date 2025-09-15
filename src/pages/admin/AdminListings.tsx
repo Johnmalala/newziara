@@ -4,12 +4,15 @@ import { Tables } from '../../types/supabase';
 import { format } from 'date-fns';
 import { Plus, Edit, Trash2, Loader } from 'lucide-react';
 import toast from 'react-hot-toast';
+import ListingFormModal from '../../components/admin/ListingFormModal';
 
 type Listing = Tables<'listings'>;
 
 const AdminListings: React.FC = () => {
   const [listings, setListings] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingListing, setEditingListing] = useState<Listing | null>(null);
 
   useEffect(() => {
     fetchListings();
@@ -27,7 +30,14 @@ const AdminListings: React.FC = () => {
   };
   
   const handleDelete = async (id: string) => {
-    if (window.confirm('Are you sure you want to delete this listing?')) {
+    if (window.confirm('Are you sure you want to delete this listing? This action cannot be undone.')) {
+      // First, delete related bookings
+      const { error: bookingError } = await supabase.from('bookings').delete().eq('listing_id', id);
+      if (bookingError) {
+        toast.error(`Could not delete related bookings: ${bookingError.message}`);
+        return;
+      }
+
       const { error } = await supabase.from('listings').delete().eq('id', id);
       if (error) {
         toast.error(error.message);
@@ -38,12 +48,26 @@ const AdminListings: React.FC = () => {
     }
   };
 
+  const handleAdd = () => {
+    setEditingListing(null);
+    setIsModalOpen(true);
+  };
+
+  const handleEdit = (listing: Listing) => {
+    setEditingListing(listing);
+    setIsModalOpen(true);
+  };
+
+  const handleSuccess = () => {
+    setIsModalOpen(false);
+    fetchListings();
+  };
 
   return (
     <div>
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold text-gray-800">Manage Listings</h1>
-        <button className="bg-red-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-red-700">
+        <button onClick={handleAdd} className="bg-red-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-red-700">
           <Plus className="h-5 w-5 mr-2" />
           Add Listing
         </button>
@@ -83,7 +107,7 @@ const AdminListings: React.FC = () => {
                   </td>
                   <td className="px-6 py-4">{format(new Date(listing.created_at), 'dd MMM yyyy')}</td>
                   <td className="px-6 py-4 text-right">
-                    <button className="p-2 text-blue-600 hover:text-blue-800">
+                    <button onClick={() => handleEdit(listing)} className="p-2 text-blue-600 hover:text-blue-800">
                       <Edit className="h-4 w-4" />
                     </button>
                     <button onClick={() => handleDelete(listing.id)} className="p-2 text-red-600 hover:text-red-800">
@@ -96,6 +120,13 @@ const AdminListings: React.FC = () => {
           </table>
         )}
       </div>
+      
+      <ListingFormModal 
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSuccess={handleSuccess}
+        listing={editingListing}
+      />
     </div>
   );
 };

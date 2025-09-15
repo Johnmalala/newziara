@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Send, Phone, Mail, MessageSquare, CheckCircle } from 'lucide-react';
+import { Send, Phone, Mail, MessageSquare, CheckCircle, Loader } from 'lucide-react';
+import { supabase } from '../lib/supabase';
+import toast from 'react-hot-toast';
 
 const CustomPackagePage: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -24,11 +26,23 @@ const CustomPackagePage: React.FC = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
+    const { error } = await supabase.from('custom_package_requests').insert({
+      name: formData.name,
+      email: formData.email,
+      whatsapp_phone: formData.whatsapp_phone || null,
+      call_phone: formData.call_phone || null,
+      message: formData.message,
+      status: 'new'
+    });
+
+    setIsLoading(false);
+
+    if (error) {
+      toast.error(error.message);
+    } else {
+      toast.success('Request submitted successfully!');
       setIsSubmitted(true);
-    }, 2000);
+    }
   };
 
   if (isSubmitted) {
@@ -184,7 +198,7 @@ const CustomPackagePage: React.FC = () => {
                     className="w-full bg-red-600 text-white py-4 rounded-lg font-semibold hover:bg-red-700 transition-colors duration-200 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isLoading ? (
-                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                      <Loader className="animate-spin h-6 w-6" />
                     ) : (
                       <>
                         <Send className="h-5 w-5 mr-2" />
