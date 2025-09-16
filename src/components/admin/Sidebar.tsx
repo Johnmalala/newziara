@@ -6,18 +6,19 @@ import { LayoutDashboard, List, Settings, LogOut, MapPin, BookUser, Package } fr
 const Sidebar: React.FC = () => {
   const { signOut, profile } = useAuth();
 
+  // CORRECTED: The paths now correctly point to the routes defined in App.tsx
   const navLinks = [
-    { to: '/admin/dashboard', icon: LayoutDashboard, text: 'Dashboard' },
-    { to: '/admin/listings', icon: List, text: 'Listings' },
-    { to: '/admin/bookings', icon: BookUser, text: 'Bookings' },
-    { to: '/admin/requests', icon: Package, text: 'Requests' },
-    { to: '/admin/settings', icon: Settings, text: 'Site Settings' },
+    { to: '/dashboard', icon: LayoutDashboard, text: 'Dashboard' },
+    { to: '/listings', icon: List, text: 'Listings' },
+    { to: '/bookings', icon: BookUser, text: 'Bookings' },
+    { to: '/requests', icon: Package, text: 'Requests' },
+    { to: '/settings', icon: Settings, text: 'Site Settings' },
   ];
 
   return (
     <div className="w-64 bg-gray-800 text-white flex flex-col">
       <div className="flex items-center justify-center h-20 border-b border-gray-700">
-        <MapPin className="h-8 w-8 text-red-500" />
+        <MapPin className="h-8 w-8 text-primary" />
         <span className="text-2xl font-bold ml-2">Ziarazetu</span>
       </div>
       <nav className="flex-1 px-4 py-6 space-y-2">
@@ -25,9 +26,10 @@ const Sidebar: React.FC = () => {
           <NavLink
             key={link.text}
             to={link.to}
+            end // Use 'end' to prevent parent routes from staying active
             className={({ isActive }) =>
               `flex items-center px-4 py-2 rounded-lg transition-colors duration-200 ${
-                isActive ? 'bg-red-600 text-white' : 'hover:bg-gray-700'
+                isActive ? 'bg-primary text-white' : 'hover:bg-gray-700'
               }`
             }
           >
@@ -43,7 +45,7 @@ const Sidebar: React.FC = () => {
         </div>
         <button
           onClick={signOut}
-          className="w-full flex items-center px-4 py-2 rounded-lg text-left hover:bg-red-600 transition-colors duration-200"
+          className="w-full flex items-center px-4 py-2 rounded-lg text-left hover:bg-primary transition-colors duration-200"
         >
           <LogOut className="h-5 w-5 mr-3" />
           Sign Out

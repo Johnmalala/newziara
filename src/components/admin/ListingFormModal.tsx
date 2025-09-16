@@ -94,16 +94,16 @@ const ListingFormModal: React.FC<ListingFormModalProps> = ({ isOpen, onClose, on
         <form onSubmit={handleSubmit} className="flex-grow overflow-y-auto p-6 space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700">Title</label>
-            <input type="text" name="title" value={formData.title || ''} onChange={handleChange} className="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required />
+            <input type="text" name="title" value={formData.title || ''} onChange={handleChange} className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary" required />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">Description</label>
-            <textarea name="description" value={formData.description || ''} onChange={handleChange} rows={4} className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></textarea>
+            <textarea name="description" value={formData.description || ''} onChange={handleChange} rows={4} className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary"></textarea>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700">Category</label>
-              <select name="category" value={formData.category || 'tour'} onChange={handleChange} className="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+              <select name="category" value={formData.category || 'tour'} onChange={handleChange} className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary">
                 <option value="tour">Tour</option>
                 <option value="stay">Stay</option>
                 <option value="volunteer">Volunteer</option>
@@ -111,7 +111,7 @@ const ListingFormModal: React.FC<ListingFormModalProps> = ({ isOpen, onClose, on
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">Status</label>
-              <select name="status" value={formData.status || 'draft'} onChange={handleChange} className="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+              <select name="status" value={formData.status || 'draft'} onChange={handleChange} className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary">
                 <option value="draft">Draft</option>
                 <option value="published">Published</option>
               </select>
@@ -120,35 +120,35 @@ const ListingFormModal: React.FC<ListingFormModalProps> = ({ isOpen, onClose, on
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700">Price</label>
-              <input type="number" name="price" value={formData.price || 0} onChange={handleChange} className="mt-1 block w-full border-gray-300 rounded-md shadow-sm" />
+              <input type="number" name="price" value={formData.price || 0} onChange={handleChange} className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary" />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">Location</label>
-              <input type="text" name="location" value={formData.location || ''} onChange={handleChange} className="mt-1 block w-full border-gray-300 rounded-md shadow-sm" />
+              <input type="text" name="location" value={formData.location || ''} onChange={handleChange} className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary" />
             </div>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">Images (one URL per line)</label>
-            <textarea name="images" value={(formData.images || []).join('\n')} onChange={handleArrayChange} rows={3} className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></textarea>
+            <textarea name="images" value={(formData.images || []).join('\n')} onChange={handleArrayChange} rows={3} className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary"></textarea>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700">Inclusions (one per line)</label>
-              <textarea name="inclusions" value={(formData.inclusions || []).join('\n')} onChange={handleArrayChange} rows={4} className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></textarea>
+              <textarea name="inclusions" value={(formData.inclusions || []).join('\n')} onChange={handleArrayChange} rows={4} className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary"></textarea>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">Exclusions (one per line)</label>
-              <textarea name="exclusions" value={(formData.exclusions || []).join('\n')} onChange={handleArrayChange} rows={4} className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></textarea>
+              <textarea name="exclusions" value={(formData.exclusions || []).join('\n')} onChange={handleArrayChange} rows={4} className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary"></textarea>
             </div>
           </div>
            <div>
             <label className="block text-sm font-medium text-gray-700">Available Dates (YYYY-MM-DD, one per line)</label>
-            <textarea name="availability" value={(formData.availability as string[] || []).join('\n')} onChange={handleArrayChange} rows={4} className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></textarea>
+            <textarea name="availability" value={(formData.availability as string[] || []).join('\n')} onChange={handleArrayChange} rows={4} className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary"></textarea>
           </div>
         </form>
         <div className="p-4 border-t flex justify-end">
           <button onClick={onClose} className="mr-2 px-4 py-2 border border-gray-300 rounded-md text-sm font-medium">Cancel</button>
-          <button onClick={handleSubmit} disabled={saving} className="bg-red-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-red-700 disabled:bg-red-400">
+          <button onClick={handleSubmit} disabled={saving} className="bg-primary text-white px-4 py-2 rounded-lg flex items-center hover:brightness-90 disabled:opacity-50">
             {saving ? <Loader className="animate-spin h-5 w-5 mr-2" /> : <Save className="h-5 w-5 mr-2" />}
             {saving ? 'Saving...' : 'Save Listing'}
           </button>

@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { Toaster } from 'react-hot-toast';
 
 import { AuthProvider } from './context/AuthContext';
+import { SettingsProvider, useSettings } from './context/SettingsContext';
 
 import Header from './components/Layout/Header';
 import Footer from './components/Layout/Footer';
@@ -26,17 +27,14 @@ import AdminSettings from './pages/admin/AdminSettings';
 import ProtectedRoute from './components/admin/ProtectedRoute';
 
 function App() {
-  // --- DEVELOPMENT TOGGLE ---
-  // Set to `true` to view the admin portal.
-  // Set to `false` to view the public website.
-  // IMPORTANT: Change this back to `window.location.hostname.startsWith('admin')` before deploying.
+  // Temporary change for local development: Force admin view
   const isAdminSubdomain = true;
 
   return (
     <AuthProvider>
       <Router>
         <Toaster position="top-center" reverseOrder={false} />
-        {isAdminSubdomain ? <AdminRoutes /> : <PublicRoutes />}
+        {isAdminSubdomain ? <AdminRoutes /> : <PublicSite />}
       </Router>
     </AuthProvider>
   );
@@ -46,54 +44,68 @@ const AdminRoutes = () => (
   <Routes>
     <Route path="/login" element={<AdminLoginPage />} />
     <Route 
-      path="/*" 
+      path="/" 
       element={
         <ProtectedRoute adminOnly>
           <AdminLayout />
         </ProtectedRoute>
       }
     >
-      <Route index element={<AdminDashboard />} />
+      <Route index element={<Navigate to="/dashboard" replace />} />
       <Route path="dashboard" element={<AdminDashboard />} />
       <Route path="listings" element={<AdminListings />} />
       <Route path="bookings" element={<AdminBookings />} />
       <Route path="requests" element={<AdminRequests />} />
       <Route path="settings" element={<AdminSettings />} />
-      {/* Redirect any other admin path to the admin dashboard */}
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Route>
   </Routes>
 );
 
-
-const PublicRoutes = () => (
-  <div className="min-h-screen flex flex-col">
-    <Header />
-    <main className="flex-grow">
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/tours" element={<ToursPage />} />
-        <Route path="/stays" element={<StaysPage />} />
-        <Route path="/volunteers" element={<VolunteersPage />} />
-        <Route path="/custom-package" element={<CustomPackagePage />} />
-        <Route path="/listing/:id" element={<ProductDetailPage />} />
-        <Route path="/booking" element={<BookingPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignUpPage />} />
-        <Route 
-          path="/dashboard" 
-          element={
-            <ProtectedRoute>
-              <DashboardPage />
-            </ProtectedRoute>
-          } 
-        />
-        {/* If someone tries to access /admin on the main domain, redirect them */}
-        <Route path="/admin/*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </main>
-    <Footer />
-  </div>
+const PublicSite = () => (
+  <SettingsProvider>
+    <ThemedPublicRoutes />
+  </SettingsProvider>
 );
+
+const ThemedPublicRoutes = () => {
+  const { settings } = useSettings();
+
+  return (
+    <div className="min-h-screen flex flex-col">
+      <style>
+        {`
+          :root {
+            --color-primary: ${settings?.primary_color || '#dc2626'};
+          }
+        `}
+      </style>
+      <Header />
+      <main className="flex-grow">
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/tours" element={<ToursPage />} />
+          <Route path="/stays" element={<StaysPage />} />
+          <Route path="/volunteers" element={<VolunteersPage />} />
+          <Route path="/custom-package" element={<CustomPackagePage />} />
+          <Route path="/listing/:id" element={<ProductDetailPage />} />
+          <Route path="/booking" element={<BookingPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignUpPage />} />
+          <Route 
+            path="/dashboard" 
+            element={
+              <ProtectedRoute>
+                <DashboardPage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route path="/admin/*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </main>
+      <Footer />
+    </div>
+  );
+};
 
 export default App;

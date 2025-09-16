@@ -5,35 +5,25 @@ import { ArrowRight, Camera, Mountain, Heart, Users } from 'lucide-react';
 import ListingCard from '../components/ui/ListingCard';
 import { supabase } from '../lib/supabase';
 import { Tables } from '../types/supabase';
+import { useSettings } from '../context/SettingsContext';
 
 type Listing = Tables<'listings'>;
-type SiteSettings = Tables<'site_settings'>;
 
 const HomePage: React.FC = () => {
   const [featuredTours, setFeaturedTours] = useState<Listing[]>([]);
   const [featuredStays, setFeaturedStays] = useState<Listing[]>([]);
-  const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
+  const { settings, loading: settingsLoading } = useSettings();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      
-      // Fetch settings
-      const { data: settingsData } = await supabase.from('site_settings').select('*').eq('id', 1).single();
-      setSiteSettings(settingsData);
-
-      // Fetch featured tours
       const { data: toursData } = await supabase.from('listings').select('*').eq('category', 'tour').eq('status', 'published').limit(3);
       setFeaturedTours(toursData || []);
-
-      // Fetch featured stays
       const { data: staysData } = await supabase.from('listings').select('*').eq('category', 'stay').eq('status', 'published').limit(3);
       setFeaturedStays(staysData || []);
-
       setLoading(false);
     };
-
     fetchData();
   }, []);
 
@@ -46,12 +36,11 @@ const HomePage: React.FC = () => {
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
       <section className="relative h-screen flex items-center justify-center">
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: `url(${siteSettings?.banner_url || 'https://images.unsplash.com/photo-1473163928189-364b2c4e1135?w=1200'})`,
+            backgroundImage: `url(${settings?.banner_url || 'https://images.unsplash.com/photo-1473163928189-364b2c4e1135?w=1200'})`,
           }}
         >
           <div className="absolute inset-0 bg-black/50"></div>
@@ -82,7 +71,7 @@ const HomePage: React.FC = () => {
           >
             <Link
               to="/tours"
-              className="bg-red-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-red-700 transition-colors"
+              className="bg-primary text-white px-8 py-4 rounded-lg text-lg font-semibold hover:brightness-90 transition-all"
             >
               Explore Tours <ArrowRight className="inline ml-2 h-5 w-5" />
             </Link>
@@ -96,7 +85,6 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* Quick Links Section */}
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -126,7 +114,7 @@ const HomePage: React.FC = () => {
                   <div className={`${link.color} w-12 h-12 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
                     <link.icon className="h-6 w-6 text-white" />
                   </div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-red-600">{link.title}</h3>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-primary">{link.title}</h3>
                   <p className="text-gray-600">{link.description}</p>
                 </Link>
               </motion.div>
@@ -135,7 +123,6 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* Featured Tours Section */}
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.h2 className="text-4xl font-bold text-center text-gray-900 mb-16">Featured Tours</motion.h2>
@@ -144,14 +131,13 @@ const HomePage: React.FC = () => {
                      : featuredTours.map((listing, index) => <ListingCard key={listing.id} listing={listing} index={index} />)}
           </div>
           <div className="text-center mt-12">
-            <Link to="/tours" className="inline-flex items-center text-red-600 hover:text-red-700 font-semibold text-lg">
+            <Link to="/tours" className="inline-flex items-center text-primary hover:brightness-90 font-semibold text-lg">
               View All Tours <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
           </div>
         </div>
       </section>
 
-      {/* Featured Stays Section */}
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.h2 className="text-4xl font-bold text-center text-gray-900 mb-16">Featured Accommodations</motion.h2>
@@ -160,7 +146,7 @@ const HomePage: React.FC = () => {
                      : featuredStays.map((listing, index) => <ListingCard key={listing.id} listing={listing} index={index} />)}
           </div>
           <div className="text-center mt-12">
-            <Link to="/stays" className="inline-flex items-center text-red-600 hover:text-red-700 font-semibold text-lg">
+            <Link to="/stays" className="inline-flex items-center text-primary hover:brightness-90 font-semibold text-lg">
               View All Accommodations <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
           </div>

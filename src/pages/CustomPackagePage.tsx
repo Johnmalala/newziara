@@ -72,7 +72,7 @@ const CustomPackagePage: React.FC = () => {
                 message: ''
               });
             }}
-            className="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors duration-200"
+            className="bg-primary text-white px-6 py-3 rounded-lg hover:brightness-90 transition-colors duration-200"
           >
             Submit Another Request
           </button>
@@ -83,8 +83,7 @@ const CustomPackagePage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Hero Section */}
-      <section className="bg-red-600 text-white py-20">
+      <section className="bg-primary text-white py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -102,7 +101,6 @@ const CustomPackagePage: React.FC = () => {
       <section className="py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            {/* Form */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -123,7 +121,7 @@ const CustomPackagePage: React.FC = () => {
                       required
                       value={formData.name}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                       placeholder="Enter your full name"
                     />
                   </div>
@@ -139,7 +137,7 @@ const CustomPackagePage: React.FC = () => {
                       required
                       value={formData.email}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                       placeholder="Enter your email address"
                     />
                   </div>
@@ -155,7 +153,7 @@ const CustomPackagePage: React.FC = () => {
                         name="whatsapp_phone"
                         value={formData.whatsapp_phone}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                         placeholder="+254 700 123 456"
                       />
                     </div>
@@ -170,7 +168,7 @@ const CustomPackagePage: React.FC = () => {
                         name="call_phone"
                         value={formData.call_phone}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                         placeholder="+254 700 123 456"
                       />
                     </div>
@@ -187,7 +185,7 @@ const CustomPackagePage: React.FC = () => {
                       rows={6}
                       value={formData.message}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent resize-none"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
                       placeholder="Describe your ideal East African experience. Include destinations, activities, duration, number of travellers, budget range, and any special requirements..."
                     />
                   </div>
@@ -195,7 +193,7 @@ const CustomPackagePage: React.FC = () => {
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className="w-full bg-red-600 text-white py-4 rounded-lg font-semibold hover:bg-red-700 transition-colors duration-200 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full bg-primary text-white py-4 rounded-lg font-semibold hover:brightness-90 transition-colors duration-200 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isLoading ? (
                       <Loader className="animate-spin h-6 w-6" />
@@ -210,7 +208,6 @@ const CustomPackagePage: React.FC = () => {
               </div>
             </motion.div>
 
-            {/* Info Section */}
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -222,7 +219,7 @@ const CustomPackagePage: React.FC = () => {
                 <div className="space-y-4">
                   <div className="flex items-start space-x-3">
                     <div className="bg-red-100 rounded-full p-2 mt-1">
-                      <CheckCircle className="h-4 w-4 text-red-600" />
+                      <CheckCircle className="h-4 w-4 text-primary" />
                     </div>
                     <div>
                       <h4 className="font-semibold text-gray-900">Personalised Itineraries</h4>
@@ -231,7 +228,7 @@ const CustomPackagePage: React.FC = () => {
                   </div>
                   <div className="flex items-start space-x-3">
                     <div className="bg-red-100 rounded-full p-2 mt-1">
-                      <CheckCircle className="h-4 w-4 text-red-600" />
+                      <CheckCircle className="h-4 w-4 text-primary" />
                     </div>
                     <div>
                       <h4 className="font-semibold text-gray-900">Expert Local Guides</h4>
@@ -240,7 +237,7 @@ const CustomPackagePage: React.FC = () => {
                   </div>
                   <div className="flex items-start space-x-3">
                     <div className="bg-red-100 rounded-full p-2 mt-1">
-                      <CheckCircle className="h-4 w-4 text-red-600" />
+                      <CheckCircle className="h-4 w-4 text-primary" />
                     </div>
                     <div>
                       <h4 className="font-semibold text-gray-900">Flexible Pricing</h4>
@@ -249,7 +246,7 @@ const CustomPackagePage: React.FC = () => {
                   </div>
                   <div className="flex items-start space-x-3">
                     <div className="bg-red-100 rounded-full p-2 mt-1">
-                      <CheckCircle className="h-4 w-4 text-red-600" />
+                      <CheckCircle className="h-4 w-4 text-primary" />
                     </div>
                     <div>
                       <h4 className="font-semibold text-gray-900">24/7 Support</h4>
@@ -263,15 +260,15 @@ const CustomPackagePage: React.FC = () => {
                 <h3 className="text-xl font-bold text-gray-900 mb-4">Contact Information</h3>
                 <div className="space-y-4">
                   <div className="flex items-center space-x-3">
-                    <Phone className="h-5 w-5 text-red-600" />
+                    <Phone className="h-5 w-5 text-primary" />
                     <span className="text-gray-700">+254 700 123 456</span>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <Mail className="h-5 w-5 text-red-600" />
+                    <Mail className="h-5 w-5 text-primary" />
                     <span className="text-gray-700">custom@ziarazetu.com</span>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <MessageSquare className="h-5 w-5 text-red-600" />
+                    <MessageSquare className="h-5 w-5 text-primary" />
                     <span className="text-gray-700">WhatsApp: +254 700 123 456</span>
                   </div>
                 </div>

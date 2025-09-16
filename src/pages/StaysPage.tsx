@@ -1,5 +1,4 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import { Search, Filter, MapPin, Loader } from 'lucide-react';
 import ListingCard from '../components/ui/ListingCard';
 import { supabase } from '../lib/supabase';
@@ -17,7 +16,7 @@ const StaysPage: React.FC = () => {
   useEffect(() => {
     const fetchStays = async () => {
       setLoading(true);
-      const { data, error } = await supabase.from('listings').select('*').eq('category', 'stay').eq('status', 'published');
+      const { data } = await supabase.from('listings').select('*').eq('category', 'stay').eq('status', 'published');
       if (data) setStays(data);
       setLoading(false);
     };
@@ -48,7 +47,7 @@ const StaysPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <section className="bg-red-600 text-white py-20">
+      <section className="bg-primary text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-5xl font-bold mb-6">Accommodation</h1>
           <p className="text-xl text-red-100 max-w-3xl mx-auto">
@@ -62,18 +61,18 @@ const StaysPage: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-              <input type="text" placeholder="Search accommodations..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500" />
+              <input type="text" placeholder="Search accommodations..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary" />
             </div>
             <div className="relative">
               <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-              <select value={selectedLocation} onChange={(e) => setSelectedLocation(e.target.value)} className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 appearance-none">
+              <select value={selectedLocation} onChange={(e) => setSelectedLocation(e.target.value)} className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary appearance-none">
                 <option value="">All Locations</option>
                 {locations.map(location => <option key={location} value={location}>{location}</option>)}
               </select>
             </div>
             <div className="relative">
               <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-              <select value={priceRange} onChange={(e) => setPriceRange(e.target.value)} className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 appearance-none">
+              <select value={priceRange} onChange={(e) => setPriceRange(e.target.value)} className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary appearance-none">
                 <option value="">All Prices</option>
                 <option value="under-100">Under $100</option>
                 <option value="100-200">$100 - $200</option>
@@ -92,7 +91,7 @@ const StaysPage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {loading ? (
             <div className="flex justify-center items-center h-64">
-              <Loader className="animate-spin h-12 w-12 text-red-600" />
+              <Loader className="animate-spin h-12 w-12 text-primary" />
             </div>
           ) : (
             <>

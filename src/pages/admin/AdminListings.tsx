@@ -31,7 +31,6 @@ const AdminListings: React.FC = () => {
   
   const handleDelete = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this listing? This action cannot be undone.')) {
-      // First, delete related bookings
       const { error: bookingError } = await supabase.from('bookings').delete().eq('listing_id', id);
       if (bookingError) {
         toast.error(`Could not delete related bookings: ${bookingError.message}`);
@@ -67,7 +66,7 @@ const AdminListings: React.FC = () => {
     <div>
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold text-gray-800">Manage Listings</h1>
-        <button onClick={handleAdd} className="bg-red-600 text-white px-4 py-2 rounded-lg flex items-center hover:bg-red-700">
+        <button onClick={handleAdd} className="bg-primary text-white px-4 py-2 rounded-lg flex items-center hover:brightness-90">
           <Plus className="h-5 w-5 mr-2" />
           Add Listing
         </button>
@@ -76,7 +75,7 @@ const AdminListings: React.FC = () => {
       <div className="bg-white shadow-md rounded-lg overflow-x-auto">
         {loading ? (
           <div className="flex justify-center items-center p-8">
-            <Loader className="animate-spin h-8 w-8 text-red-600" />
+            <Loader className="animate-spin h-8 w-8 text-primary" />
           </div>
         ) : (
           <table className="w-full min-w-max text-sm text-left text-gray-500">

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { MapPin, Star, Calendar, Users } from 'lucide-react';
+import { MapPin, Star } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Listing } from '../../types';
 
@@ -24,7 +24,7 @@ const ListingCard: React.FC<ListingCardProps> = ({ listing, index = 0 }) => {
           className="w-full h-48 object-cover"
         />
         <div className="absolute top-4 left-4">
-          <span className="bg-red-600 text-white px-3 py-1 rounded-full text-sm font-medium capitalize">
+          <span className="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium capitalize">
             {listing.category}
           </span>
         </div>
@@ -54,7 +54,7 @@ const ListingCard: React.FC<ListingCardProps> = ({ listing, index = 0 }) => {
 
         <div className="flex items-center justify-between">
           <div className="flex flex-col">
-            <span className="text-2xl font-bold text-red-600">
+            <span className="text-2xl font-bold text-primary">
               ${listing.price}
             </span>
             <span className="text-sm text-gray-500">
@@ -64,7 +64,7 @@ const ListingCard: React.FC<ListingCardProps> = ({ listing, index = 0 }) => {
 
           <Link
             to={`/listing/${listing.id}`}
-            className="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-colors duration-200 font-medium"
+            className="bg-primary text-white px-6 py-2 rounded-lg hover:brightness-90 transition-all duration-200 font-medium"
           >
             View Details
           </Link>

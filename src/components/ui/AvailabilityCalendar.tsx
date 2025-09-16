@@ -91,14 +91,14 @@ const AvailabilityCalendar: React.FC<AvailabilityCalendarProps> = ({
           } else {
             buttonClass += 'hover:bg-red-100 ';
             if (isSelected) {
-              buttonClass += 'bg-red-600 text-white font-semibold';
+              buttonClass += 'bg-primary text-white font-semibold';
             } else {
               buttonClass += 'text-gray-700 font-medium';
             }
           }
           
           if (day.getTime() === today.getTime() && !isSelected) {
-            buttonClass += ' border-2 border-red-300';
+            buttonClass += ' border-2 border-primary';
           }
 
           return (
@@ -116,7 +116,7 @@ const AvailabilityCalendar: React.FC<AvailabilityCalendarProps> = ({
 
       <div className="mt-4 pt-4 border-t border-gray-200 flex flex-wrap gap-x-4 gap-y-2 text-xs">
         <div className="flex items-center">
-          <div className="w-3 h-3 rounded-full bg-red-600 mr-2"></div>
+          <div className="w-3 h-3 rounded-full bg-primary mr-2"></div>
           <span>Selected</span>
         </div>
         <div className="flex items-center">
