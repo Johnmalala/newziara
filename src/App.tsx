@@ -29,8 +29,8 @@ import AdminSettings from './pages/admin/AdminSettings';
 import ProtectedRoute from './components/admin/ProtectedRoute';
 
 function App() {
-  // Temporary change for local development: Force public view
-  const isAdminSubdomain = false;
+  // Temporary change for local development: Force admin view
+  const isAdminSubdomain = true;
 
   return (
     <AuthProvider>

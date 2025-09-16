@@ -3,6 +3,7 @@ import { supabase } from '../../lib/supabase';
 import { format } from 'date-fns';
 import { Loader, User, Calendar } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { formatToKes } from '../../utils/currency';
 
 type BookingWithDetails = {
   id: string;
@@ -42,6 +43,39 @@ const AdminBookings: React.FC = () => {
     setLoading(false);
   };
 
+  const handleStatusChange = async (bookingId: string, newStatus: string) => {
+    // Optimistically update the UI
+    const originalBookings = [...bookings];
+    setBookings(prevBookings => 
+      prevBookings.map(b => 
+        b.id === bookingId ? { ...b, payment_status: newStatus } : b
+      )
+    );
+
+    const { error } = await supabase
+      .from('bookings')
+      .update({ payment_status: newStatus })
+      .eq('id', bookingId);
+
+    if (error) {
+      toast.error('Failed to update status.');
+      // Revert UI on error
+      setBookings(originalBookings);
+    } else {
+      toast.success('Status updated successfully!');
+    }
+  };
+
+  const getStatusColor = (status: string | null) => {
+    switch (status) {
+      case 'paid': return 'bg-green-100 text-green-800';
+      case 'confirmed': return 'bg-indigo-100 text-indigo-800';
+      case 'pending': return 'bg-yellow-100 text-yellow-800';
+      case 'partial': return 'bg-blue-100 text-blue-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
   return (
     <div>
       <h1 className="text-3xl font-bold text-gray-800 mb-8">All Bookings</h1>
@@ -57,7 +91,7 @@ const AdminBookings: React.FC = () => {
                 <th scope="col" className="px-6 py-3">Listing</th>
                 <th scope="col" className="px-6 py-3">User</th>
                 <th scope="col" className="px-6 py-3">Booking Date</th>
-                <th scope="col" className="px-6 py-3">Amount</th>
+                <th scope="col" className="px-6 py-3">Amount (KES)</th>
                 <th scope="col" className="px-6 py-3">Status</th>
                 <th scope="col" className="px-6 py-3">Requested At</th>
               </tr>
@@ -83,15 +117,18 @@ const AdminBookings: React.FC = () => {
                       {format(new Date(booking.booking_date), 'dd MMM yyyy')}
                     </div>
                   </td>
-                  <td className="px-6 py-4 font-medium text-gray-800">${booking.total_amount}</td>
+                  <td className="px-6 py-4 font-medium text-gray-800">{formatToKes(booking.total_amount)}</td>
                   <td className="px-6 py-4">
-                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                      booking.payment_status === 'paid' ? 'bg-green-100 text-green-800' :
-                      booking.payment_status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                      'bg-gray-100 text-gray-800'
-                    }`}>
-                      {booking.payment_status}
-                    </span>
+                    <select
+                      value={booking.payment_status || 'pending'}
+                      onChange={(e) => handleStatusChange(booking.id, e.target.value)}
+                      className={`text-xs font-medium border-none rounded-full appearance-none focus:ring-0 p-2 ${getStatusColor(booking.payment_status)}`}
+                    >
+                      <option value="pending">Pending</option>
+                      <option value="confirmed">Confirmed</option>
+                      <option value="paid">Paid</option>
+                      <option value="partial">Partial</option>
+                    </select>
                   </td>
                   <td className="px-6 py-4">{format(new Date(booking.created_at), 'dd MMM yyyy, HH:mm')}</td>
                 </tr>

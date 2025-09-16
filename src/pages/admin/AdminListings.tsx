@@ -7,6 +7,7 @@ import { Plus, Edit, Trash2, Loader, Calendar, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import AdminAvailabilityCalendar from '../../components/admin/AdminAvailabilityCalendar';
+import { formatToKes } from '../../utils/currency';
 
 type Listing = Tables<'listings'>;
 
@@ -109,7 +110,7 @@ const AdminListings: React.FC = () => {
               <tr>
                 <th scope="col" className="px-6 py-3">Title</th>
                 <th scope="col" className="px-6 py-3">Category</th>
-                <th scope="col" className="px-6 py-3">Price</th>
+                <th scope="col" className="px-6 py-3">Price (KES)</th>
                 <th scope="col" className="px-6 py-3">Status</th>
                 <th scope="col" className="px-6 py-3">Created At</th>
                 <th scope="col" className="px-6 py-3 text-right">Actions</th>
@@ -122,7 +123,7 @@ const AdminListings: React.FC = () => {
                     {listing.title}
                   </th>
                   <td className="px-6 py-4 capitalize">{listing.category}</td>
-                  <td className="px-6 py-4">${listing.price}</td>
+                  <td className="px-6 py-4">{formatToKes(listing.price)}</td>
                   <td className="px-6 py-4">
                     <span className={`px-2 py-1 text-xs font-medium rounded-full ${
                       listing.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
