@@ -8,11 +8,13 @@ import {
 import { supabase } from '../lib/supabase';
 import { Tables } from '../types/supabase';
 import AvailabilityCalendar from '../components/ui/AvailabilityCalendar';
+import { useCurrency } from '../context/CurrencyContext';
 
 type Listing = Tables<'listings'>;
 
 const ProductDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const { convertPrice } = useCurrency();
   const [listing, setListing] = useState<Listing | null>(null);
   const [bookedDates, setBookedDates] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
@@ -119,7 +121,7 @@ const ProductDetailPage: React.FC = () => {
                   <div className="flex items-center text-gray-600 mb-4"><MapPin className="h-5 w-5 mr-2" /><span>{listing.location}</span></div>
                   {listing.rating && <div className="flex items-center"><Star className="h-5 w-5 text-yellow-500 fill-current mr-1" /><span className="font-semibold text-gray-900">{listing.rating}</span><span className="text-gray-500 ml-2">(127 reviews)</span></div>}
                 </div>
-                <div className="text-right"><div className="text-3xl font-bold text-primary">${listing.price}</div><div className="text-sm text-gray-500">{listing.category === 'stay' ? 'per night' : 'per person'}</div></div>
+                <div className="text-right"><div className="text-3xl font-bold text-primary">{convertPrice(listing.price)}</div><div className="text-sm text-gray-500">{listing.category === 'stay' ? 'per night' : 'per person'}</div></div>
               </div>
               <div className="prose max-w-none"><p className="text-gray-700 leading-relaxed">{listing.description}</p></div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8 p-6 bg-gray-50 rounded-xl">
@@ -146,13 +148,13 @@ const ProductDetailPage: React.FC = () => {
 
           <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.4 }} className="lg:col-span-1">
             <div className="sticky top-28"><div className="bg-white rounded-2xl shadow-lg p-6">
-              <div className="text-center mb-6"><div className="text-3xl font-bold text-primary">${listing.price}</div><div className="text-sm text-gray-500">{listing.category === 'stay' ? 'per night' : 'per person'}</div></div>
+              <div className="text-center mb-6"><div className="text-3xl font-bold text-primary">{convertPrice(listing.price)}</div><div className="text-sm text-gray-500">{listing.category === 'stay' ? 'per night' : 'per person'}</div></div>
               <div className="space-y-4">
                 <div><label className="block text-sm font-medium text-gray-700 mb-2">Select Date</label><AvailabilityCalendar availableDates={listing.availability as string[] | undefined} bookedDates={bookedDates} selectedDate={selectedDate} onDateSelect={setSelectedDate} /></div>
                 <div><label className="block text-sm font-medium text-gray-700 mb-2">{listing.category === 'stay' ? 'Guests' : 'Travellers'}</label><select value={guests} onChange={(e) => setGuests(Number(e.target.value))} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary">{[1, 2, 3, 4, 5, 6, 7, 8].map(n => <option key={n} value={n}>{n} {n === 1 ? (listing.category === 'stay' ? 'Guest' : 'Traveller') : (listing.category === 'stay' ? 'Guests' : 'Travellers')}</option>)}</select></div>
                 <div className="border-t pt-4">
-                  <div className="flex justify-between items-center mb-2"><span className="text-gray-600">${listing.price} x {guests} {listing.category === 'stay' ? 'night' : 'person'}</span><span className="font-medium">${(listing.price * guests).toFixed(2)}</span></div>
-                  <div className="flex justify-between items-center font-bold text-lg"><span>Total</span><span className="text-primary">${(listing.price * guests).toFixed(2)}</span></div>
+                  <div className="flex justify-between items-center mb-2"><span className="text-gray-600">{convertPrice(listing.price)} x {guests} {listing.category === 'stay' ? 'night' : 'person'}</span><span className="font-medium">{convertPrice(listing.price * guests)}</span></div>
+                  <div className="flex justify-between items-center font-bold text-lg"><span>Total</span><span className="text-primary">{convertPrice(listing.price * guests)}</span></div>
                 </div>
                 <Link to={!isBookingDisabled ? "/booking" : '#'} state={{ listing, selectedDate, guests }} aria-disabled={isBookingDisabled} className={`block w-full text-center bg-primary text-white py-4 rounded-lg text-lg font-semibold hover:brightness-90 ${isBookingDisabled ? 'bg-gray-400 cursor-not-allowed hover:bg-gray-400' : ''}`}>Book Now - Pay on Arrival</Link>
                 <div className="text-center text-sm text-gray-500">{selectedDate ? `You won't be charged until arrival.` : 'Please select a date to book.'}</div>

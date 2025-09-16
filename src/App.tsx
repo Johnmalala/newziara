@@ -4,6 +4,7 @@ import { Toaster } from 'react-hot-toast';
 
 import { AuthProvider } from './context/AuthContext';
 import { SettingsProvider, useSettings } from './context/SettingsContext';
+import { CurrencyProvider } from './context/CurrencyContext'; // Import CurrencyProvider
 
 import Header from './components/Layout/Header';
 import Footer from './components/Layout/Footer';
@@ -21,14 +22,15 @@ import AdminLoginPage from './pages/admin/AdminLoginPage';
 import AdminLayout from './components/admin/AdminLayout';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminListings from './pages/admin/AdminListings';
+import ListingFormPage from './pages/admin/ListingFormPage';
 import AdminBookings from './pages/admin/AdminBookings';
 import AdminRequests from './pages/admin/AdminRequests';
 import AdminSettings from './pages/admin/AdminSettings';
 import ProtectedRoute from './components/admin/ProtectedRoute';
 
 function App() {
-  // Temporary change for local development: Force admin view
-  const isAdminSubdomain = true;
+  // Temporary change for local development: Force public view
+  const isAdminSubdomain = false;
 
   return (
     <AuthProvider>
@@ -54,6 +56,8 @@ const AdminRoutes = () => (
       <Route index element={<Navigate to="/dashboard" replace />} />
       <Route path="dashboard" element={<AdminDashboard />} />
       <Route path="listings" element={<AdminListings />} />
+      <Route path="listings/new" element={<ListingFormPage />} />
+      <Route path="listings/edit/:id" element={<ListingFormPage />} />
       <Route path="bookings" element={<AdminBookings />} />
       <Route path="requests" element={<AdminRequests />} />
       <Route path="settings" element={<AdminSettings />} />
@@ -64,7 +68,9 @@ const AdminRoutes = () => (
 
 const PublicSite = () => (
   <SettingsProvider>
-    <ThemedPublicRoutes />
+    <CurrencyProvider>
+      <ThemedPublicRoutes />
+    </CurrencyProvider>
   </SettingsProvider>
 );
 

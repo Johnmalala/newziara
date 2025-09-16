@@ -7,6 +7,7 @@ import { supabase } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
 import { Tables, TablesInsert } from '../types/supabase';
 import AvailabilityCalendar from '../components/ui/AvailabilityCalendar';
+import { useCurrency } from '../context/CurrencyContext';
 
 type Listing = Tables<'listings'>;
 type BookingInsert = TablesInsert<'bookings'>;
@@ -15,6 +16,7 @@ const BookingPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, profile, session } = useAuth();
+  const { convertPrice } = useCurrency();
   const { listing, selectedDate: initialDate, guests } = (location.state || {}) as {
     listing: Listing;
     selectedDate: string;
@@ -78,7 +80,7 @@ const BookingPage: React.FC = () => {
       listing_id: listing.id,
       user_id: user?.id,
       booking_date: selectedDate,
-      total_amount: listing.price * guests,
+      total_amount: listing.price * guests, // Always store in base currency (USD)
       payment_plan: 'arrival',
       payment_status: 'pending',
     };
@@ -94,7 +96,7 @@ const BookingPage: React.FC = () => {
     }
   };
 
-  const totalAmount = (listing.price * guests).toFixed(2);
+  const totalAmountInUsd = listing.price * guests;
 
   if (isSubmitted) {
     return (
@@ -135,8 +137,8 @@ const BookingPage: React.FC = () => {
               <div className="space-y-4"><AvailabilityCalendar availableDates={listing.availability as string[] | undefined} bookedDates={bookedDates} selectedDate={selectedDate} onDateSelect={setSelectedDate} />{!selectedDate && <p className="text-primary text-sm font-medium text-center">Please select a date to continue.</p>}</div>
               <div className="border-t mt-6 pt-4">
                 <div className="flex justify-between items-center mb-2 text-gray-600"><span>{listing.category === 'stay' ? 'Nights' : 'Guests'}</span><span>{guests}</span></div>
-                <div className="flex justify-between items-center mb-2 text-gray-600"><span>Price per {listing.category === 'stay' ? 'night' : 'person'}</span><span>${listing.price}</span></div>
-                <div className="flex justify-between items-center font-bold text-lg mt-4"><span>Total (Pay on Arrival)</span><span className="text-primary">${totalAmount}</span></div>
+                <div className="flex justify-between items-center mb-2 text-gray-600"><span>Price per {listing.category === 'stay' ? 'night' : 'person'}</span><span>{convertPrice(listing.price)}</span></div>
+                <div className="flex justify-between items-center font-bold text-lg mt-4"><span>Total (Pay on Arrival)</span><span className="text-primary">{convertPrice(totalAmountInUsd)}</span></div>
               </div>
             </div>
           </div></motion.div></div>

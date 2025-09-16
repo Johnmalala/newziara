@@ -1,15 +1,14 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, User, MapPin, LogOut, LayoutDashboard } from 'lucide-react';
+import { Menu, X, User, LogOut, LayoutDashboard, Globe, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext';
-import { useSettings } from '../../context/SettingsContext';
+import { useCurrency } from '../../context/CurrencyContext';
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
   const { session, signOut, profile, isAdmin } = useAuth();
-  const { settings } = useSettings();
 
   const navigation = [
     { name: 'Home', href: '/' },
@@ -22,14 +21,8 @@ const Header: React.FC = () => {
   const isActive = (path: string) => location.pathname === path;
 
   const Logo = () => {
-    if (settings?.logo_url) {
-      return <img src={settings.logo_url} alt="Ziarazetu Logo" className="h-10 w-auto" />;
-    }
     return (
       <div className="flex items-center space-x-2">
-        <div className="bg-primary p-2 rounded-lg">
-          <MapPin className="h-6 w-6 text-white" />
-        </div>
         <span className="text-2xl font-bold text-gray-900">Ziarazetu</span>
       </div>
     );
@@ -58,6 +51,7 @@ const Header: React.FC = () => {
           </nav>
 
           <div className="hidden md:flex items-center space-x-4">
+            <CurrencySwitcher />
             {session ? (
               <div className="relative group">
                 <button className="flex items-center space-x-2">
@@ -131,6 +125,9 @@ const Header: React.FC = () => {
                     {item.name}
                   </Link>
                 ))}
+                <div className="pt-4 border-t border-gray-200">
+                  <CurrencySwitcher />
+                </div>
                 <div className="flex flex-col space-y-2 pt-4 border-t border-gray-200">
                   {session ? (
                      <>
@@ -167,6 +164,49 @@ const Header: React.FC = () => {
         </AnimatePresence>
       </div>
     </header>
+  );
+};
+
+const CurrencySwitcher: React.FC = () => {
+  const { currency, setCurrency, currencies } = useCurrency();
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="relative">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center space-x-1 text-gray-700 hover:text-primary font-medium text-sm px-3 py-2 rounded-md"
+      >
+        <Globe className="h-4 w-4" />
+        <span>{currency}</span>
+        <ChevronDown className={`h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+      </button>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="absolute right-0 mt-2 w-32 bg-white rounded-md shadow-lg py-1 z-20 border"
+          >
+            {Object.keys(currencies).map((code) => (
+              <button
+                key={code}
+                onClick={() => {
+                  setCurrency(code);
+                  setIsOpen(false);
+                }}
+                className={`w-full text-left px-4 py-2 text-sm ${
+                  currency === code ? 'bg-red-50 text-primary' : 'text-gray-700 hover:bg-gray-100'
+                }`}
+              >
+                {code} ({currencies[code].symbol})
+              </button>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 };
 

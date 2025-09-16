@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { MapPin, Star } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Listing } from '../../types';
+import { useCurrency } from '../../context/CurrencyContext';
 
 interface ListingCardProps {
   listing: Listing;
@@ -10,6 +11,8 @@ interface ListingCardProps {
 }
 
 const ListingCard: React.FC<ListingCardProps> = ({ listing, index = 0 }) => {
+  const { convertPrice } = useCurrency();
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -55,7 +58,7 @@ const ListingCard: React.FC<ListingCardProps> = ({ listing, index = 0 }) => {
         <div className="flex items-center justify-between">
           <div className="flex flex-col">
             <span className="text-2xl font-bold text-primary">
-              ${listing.price}
+              {convertPrice(listing.price)}
             </span>
             <span className="text-sm text-gray-500">
               {listing.category === 'stay' ? 'per night' : 'per person'}

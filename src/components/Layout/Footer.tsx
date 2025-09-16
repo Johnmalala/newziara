@@ -1,19 +1,10 @@
 import React from 'react';
 import { MapPin, Phone, Mail, Facebook, Twitter, Instagram } from 'lucide-react';
-import { useSettings } from '../../context/SettingsContext';
 
 const Footer: React.FC = () => {
-  const { settings } = useSettings();
-
   const Logo = () => {
-    if (settings?.logo_url) {
-      return <img src={settings.logo_url} alt="Ziarazetu Logo" className="h-10 w-auto" />;
-    }
     return (
       <div className="flex items-center space-x-2">
-        <div className="bg-primary p-2 rounded-lg">
-          <MapPin className="h-6 w-6 text-white" />
-        </div>
         <span className="text-2xl font-bold">Ziarazetu</span>
       </div>
     );
