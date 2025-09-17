@@ -46,7 +46,9 @@ const SignUpPage: React.FC = () => {
           className="max-w-md w-full space-y-8"
         >
           <div>
-            <Link to="/" className="text-2xl font-bold text-gray-900">Ziarazetu</Link>
+            <Link to="/" className="text-2xl text-gray-900">
+              <span className="font-bold">ZIARA</span><span className="font-light">zetu</span>
+            </Link>
             <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
               Create a new account
             </h2>

@@ -47,6 +47,7 @@ export interface Profile {
   email: string;
   role?: string;
   created_at?: string;
+  email_notifications_enabled?: boolean;
 }
 
 export interface SiteSettings {

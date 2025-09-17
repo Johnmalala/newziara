@@ -154,7 +154,7 @@ const CustomPackagePage: React.FC = () => {
                         value={formData.whatsapp_phone}
                         onChange={handleChange}
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                        placeholder="+254 700 123 456"
+                        placeholder="+254 741 205 662"
                       />
                     </div>
 
@@ -169,7 +169,7 @@ const CustomPackagePage: React.FC = () => {
                         value={formData.call_phone}
                         onChange={handleChange}
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                        placeholder="+254 700 123 456"
+                        placeholder="+254 741 205 662"
                       />
                     </div>
                   </div>
@@ -261,7 +261,7 @@ const CustomPackagePage: React.FC = () => {
                 <div className="space-y-4">
                   <div className="flex items-center space-x-3">
                     <Phone className="h-5 w-5 text-primary" />
-                    <span className="text-gray-700">+254 700 123 456</span>
+                    <span className="text-gray-700">+254 741 205 662</span>
                   </div>
                   <div className="flex items-center space-x-3">
                     <Mail className="h-5 w-5 text-primary" />
@@ -269,7 +269,7 @@ const CustomPackagePage: React.FC = () => {
                   </div>
                   <div className="flex items-center space-x-3">
                     <MessageSquare className="h-5 w-5 text-primary" />
-                    <span className="text-gray-700">WhatsApp: +254 700 123 456</span>
+                    <span className="text-gray-700">WhatsApp: +254 741 205 662</span>
                   </div>
                 </div>
                 <p className="text-sm text-gray-600 mt-4">

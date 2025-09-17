@@ -26,14 +26,15 @@ const Sidebar: React.FC = () => {
       <div className="flex items-center justify-between h-16 px-4 border-b border-gray-700 dark:border-gray-800 flex-shrink-0">
         <div className="flex items-center">
           <MapPin className="h-8 w-8 text-primary" />
-          <span className="text-2xl font-bold ml-2">Ziarazetu</span>
+          <span className="text-2xl ml-2">
+            <span className="font-bold">ZIARA</span><span className="font-light">zetu</span>
+          </span>
         </div>
         <button onClick={closeSidebar} className="lg:hidden p-2 text-gray-400 hover:text-white">
           <X className="h-6 w-6" />
         </button>
       </div>
       
-      {/* FIX: Added overflow-y-auto to make nav scrollable and prevent footer from being pushed off-screen */}
       <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
         {navLinks.map(link => (
           <NavLink
@@ -53,7 +54,6 @@ const Sidebar: React.FC = () => {
         ))}
       </nav>
 
-      {/* FIX: This is the footer area that was having issues */}
       <div className="px-4 py-6 border-t border-gray-700 dark:border-gray-800 flex-shrink-0">
         <div className="mb-4">
           <p className="text-sm font-semibold text-white break-words">{profile?.full_name}</p>
@@ -62,7 +62,6 @@ const Sidebar: React.FC = () => {
         <div className="hidden lg:block mb-4">
           <ThemeToggle />
         </div>
-        {/* FIX: Made text color brighter (text-gray-300) to ensure visibility */}
         <button
           onClick={signOut}
           className="w-full flex items-center px-4 py-2 rounded-lg text-left text-gray-300 hover:bg-primary hover:text-white transition-colors duration-200"

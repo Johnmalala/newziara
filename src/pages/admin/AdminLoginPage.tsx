@@ -51,7 +51,9 @@ const AdminLoginPage: React.FC = () => {
         <div className="text-center">
             <div className="flex items-center justify-center mb-4">
                 <MapPin className="h-10 w-10 text-primary" />
-                <span className="text-3xl font-bold ml-2 text-gray-800 dark:text-gray-100">Ziarazetu</span>
+                <span className="text-3xl ml-2 text-gray-800 dark:text-gray-100">
+                  <span className="font-bold">ZIARA</span><span className="font-light">zetu</span>
+                </span>
             </div>
           <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
             Admin Portal

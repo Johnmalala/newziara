@@ -23,7 +23,9 @@ const Header: React.FC = () => {
   const Logo = () => {
     return (
       <div className="flex items-center space-x-2">
-        <span className="text-2xl font-bold text-gray-900">Ziarazetu</span>
+        <span className="text-2xl text-gray-900">
+          <span className="font-bold">ZIARA</span><span className="font-light">zetu</span>
+        </span>
       </div>
     );
   };

@@ -5,7 +5,9 @@ const Footer: React.FC = () => {
   const Logo = () => {
     return (
       <div className="flex items-center space-x-2">
-        <span className="text-2xl font-bold">Ziarazetu</span>
+        <span className="text-2xl">
+          <span className="font-bold">ZIARA</span><span className="font-light">zetu</span>
+        </span>
       </div>
     );
   };
@@ -51,7 +53,7 @@ const Footer: React.FC = () => {
             <div className="space-y-3">
               <div className="flex items-center space-x-3">
                 <Phone className="h-5 w-5 text-primary" />
-                <span className="text-gray-300">+254 700 123 456</span>
+                <span className="text-gray-300">+254 741 205 662</span>
               </div>
               <div className="flex items-center space-x-3">
                 <Mail className="h-5 w-5 text-primary" />
