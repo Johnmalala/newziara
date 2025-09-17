@@ -102,6 +102,7 @@ export type Database = {
       listings: {
         Row: {
           availability: Json | null
+          average_rating: number | null
           category: string | null
           created_at: string
           description: string | null
@@ -120,6 +121,7 @@ export type Database = {
         }
         Insert: {
           availability?: Json | null
+          average_rating?: number | null
           category?: string | null
           created_at?: string
           description?: string | null
@@ -138,6 +140,7 @@ export type Database = {
         }
         Update: {
           availability?: Json | null
+          average_rating?: number | null
           category?: string | null
           created_at?: string
           description?: string | null
@@ -226,6 +229,51 @@ export type Database = {
           },
         ]
       }
+      reviews: {
+        Row: {
+          comment: string | null
+          created_at: string
+          id: string
+          listing_id: string
+          rating: number
+          status: string
+          user_id: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          listing_id: string
+          rating: number
+          status?: string
+          user_id: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          listing_id?: string
+          rating?: number
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       site_settings: {
         Row: {
           banner_url: string | null
@@ -255,6 +303,10 @@ export type Database = {
       is_admin: {
         Args: Record<PropertyKey, never>
         Returns: boolean
+      }
+      update_listing_average_rating: {
+        Args: Record<PropertyKey, never>
+        Returns: unknown
       }
     }
     Enums: {
