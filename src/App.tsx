@@ -31,7 +31,7 @@ import AdminUsers from './pages/admin/AdminUsers'; // Import the new Users page
 import ProtectedRoute from './components/admin/ProtectedRoute';
 
 function App() {
-  const isAdminSubdomain = true;
+  const isAdminSubdomain = false;
 
   return (
     <AuthProvider>
