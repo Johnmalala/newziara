@@ -83,12 +83,12 @@ const AdminUsers: React.FC = () => {
             <Loader className="animate-spin h-8 w-8 text-primary" />
           </div>
         ) : (
-          <table className="w-full min-w-max text-sm text-left text-gray-500">
+          <table className="w-full text-sm text-left text-gray-500">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50">
               <tr>
                 <th scope="col" className="px-6 py-3">Full Name</th>
-                <th scope="col" className="px-6 py-3">Email</th>
-                <th scope="col" className="px-6 py-3">Joined At</th>
+                <th scope="col" className="px-6 py-3 hidden sm:table-cell">Email</th>
+                <th scope="col" className="px-6 py-3 hidden md:table-cell">Joined At</th>
                 <th scope="col" className="px-6 py-3">Role</th>
               </tr>
             </thead>
@@ -96,26 +96,20 @@ const AdminUsers: React.FC = () => {
               {users.map((user) => (
                 <tr key={user.id} className="bg-white border-b hover:bg-gray-50">
                   <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <User className="h-4 w-4 mr-2 text-gray-400" />
-                      {user.full_name || 'N/A'}
-                    </div>
+                    {user.full_name || 'N/A'}
                   </th>
-                  <td className="px-6 py-4">{user.email}</td>
-                  <td className="px-6 py-4">{format(new Date(user.created_at), 'dd MMM yyyy')}</td>
+                  <td className="px-6 py-4 hidden sm:table-cell">{user.email}</td>
+                  <td className="px-6 py-4 hidden md:table-cell">{format(new Date(user.created_at), 'dd MMM yyyy')}</td>
                   <td className="px-6 py-4">
-                    <div className="flex items-center">
-                      <Shield className="h-4 w-4 mr-2 text-gray-400" />
-                      <select
-                        value={user.role || 'user'}
-                        onChange={(e) => handleRoleChange(user.id, e.target.value)}
-                        disabled={user.id === currentAdminProfile?.id}
-                        className={`text-xs font-medium border-none rounded-full appearance-none focus:ring-0 p-2 ${getRoleColor(user.role)} disabled:opacity-70 disabled:cursor-not-allowed`}
-                      >
-                        <option value="user">User</option>
-                        <option value="admin">Admin</option>
-                      </select>
-                    </div>
+                    <select
+                      value={user.role || 'user'}
+                      onChange={(e) => handleRoleChange(user.id, e.target.value)}
+                      disabled={user.id === currentAdminProfile?.id}
+                      className={`text-xs font-medium border-none rounded-full appearance-none focus:ring-0 p-2 ${getRoleColor(user.role)} disabled:opacity-70 disabled:cursor-not-allowed`}
+                    >
+                      <option value="user">User</option>
+                      <option value="admin">Admin</option>
+                    </select>
                   </td>
                 </tr>
               ))}

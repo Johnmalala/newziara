@@ -23,7 +23,6 @@ const AdminBookings: React.FC = () => {
 
   const fetchBookings = async () => {
     setLoading(true);
-    // Fetch all data sources in parallel to be more robust than a complex join
     const [bookingsRes, listingsRes, profilesRes, partnersRes] = await Promise.all([
         supabase.from('bookings').select('*').order('created_at', { ascending: false }),
         supabase.from('listings').select('id, title, partner_id'),
@@ -38,12 +37,10 @@ const AdminBookings: React.FC = () => {
         return;
     }
 
-    // Create maps for quick, client-side joining
     const listingsMap = new Map(listingsRes.data.map(l => [l.id, l]));
     const profilesMap = new Map(profilesRes.data.map(p => [p.id, p]));
     const partnersMap = new Map(partnersRes.data.map(p => [p.id, p]));
 
-    // Manually join the data
     const detailedBookings = bookingsRes.data.map(booking => {
         const listing = listingsMap.get(booking.listing_id || '');
         const profile = profilesMap.get(booking.user_id || '');
@@ -102,15 +99,14 @@ const AdminBookings: React.FC = () => {
             <Loader className="animate-spin h-8 w-8 text-red-600" />
           </div>
         ) : (
-          <table className="w-full min-w-max text-sm text-left text-gray-500">
+          <table className="w-full text-sm text-left text-gray-500">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50">
               <tr>
                 <th scope="col" className="px-6 py-3">Listing</th>
-                <th scope="col" className="px-6 py-3">User</th>
-                <th scope="col" className="px-6 py-3">Partner</th>
+                <th scope="col" className="px-6 py-3 hidden md:table-cell">User</th>
+                <th scope="col" className="px-6 py-3 hidden lg:table-cell">Partner</th>
                 <th scope="col" className="px-6 py-3">Booking Date</th>
-                <th scope="col" className="px-6 py-3">Amount (KES)</th>
-                <th scope="col" className="px-6 py-3">Commission (KES)</th>
+                <th scope="col" className="px-6 py-3 hidden sm:table-cell">Amount</th>
                 <th scope="col" className="px-6 py-3">Status</th>
               </tr>
             </thead>
@@ -120,30 +116,17 @@ const AdminBookings: React.FC = () => {
                   <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                     {booking.listing_title}
                   </th>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center">
-                      <User className="h-4 w-4 mr-2 text-gray-400" />
-                      <div>
-                        <div>{booking.user_name}</div>
-                        <div className="text-xs text-gray-500">{booking.user_email}</div>
-                      </div>
-                    </div>
+                  <td className="px-6 py-4 hidden md:table-cell">
+                    <div>{booking.user_name}</div>
+                    <div className="text-xs text-gray-500">{booking.user_email}</div>
+                  </td>
+                  <td className="px-6 py-4 hidden lg:table-cell">
+                    {booking.partner_name}
                   </td>
                   <td className="px-6 py-4">
-                    <div className="flex items-center">
-                      <Users className="h-4 w-4 mr-2 text-gray-400" />
-                      {booking.partner_name}
-                    </div>
+                    {format(new Date(booking.booking_date), 'dd MMM yyyy')}
                   </td>
-
-                  <td className="px-6 py-4">
-                    <div className="flex items-center">
-                      <Calendar className="h-4 w-4 mr-2 text-gray-400" />
-                      {format(new Date(booking.booking_date), 'dd MMM yyyy')}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 font-medium text-gray-800">{formatToKes(booking.total_amount)}</td>
-                  <td className="px-6 py-4 font-medium text-blue-600">{booking.commission_owed ? formatToKes(booking.commission_owed) : 'N/A'}</td>
+                  <td className="px-6 py-4 font-medium text-gray-800 hidden sm:table-cell">{formatToKes(booking.total_amount)}</td>
                   <td className="px-6 py-4">
                     <select
                       value={booking.payment_status || 'pending'}

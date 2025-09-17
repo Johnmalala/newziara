@@ -28,7 +28,7 @@ const AdminDashboard: React.FC = () => {
       <h1 className="text-3xl font-bold text-gray-800 mb-2">Welcome, {profile?.full_name}!</h1>
       <p className="text-gray-600 mb-8">Here's a summary of your site's activity.</p>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <div className="bg-purple-100 p-6 rounded-lg shadow-md flex items-center border-l-4 border-purple-500">
           <div className="bg-white p-4 rounded-full mr-4">
             <ShieldCheck className="h-8 w-8 text-purple-500" />
