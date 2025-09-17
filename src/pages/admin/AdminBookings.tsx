@@ -1,23 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { format } from 'date-fns';
-import { Loader, User, Calendar } from 'lucide-react';
+import { Loader, User, Calendar, Users } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { formatToKes } from '../../utils/currency';
+import { Tables } from '../../types/supabase';
 
-type BookingWithDetails = {
-  id: string;
-  created_at: string;
-  booking_date: string;
-  total_amount: number;
-  payment_status: string | null;
-  listing: {
-    title: string;
-  } | null;
-  profile: {
-    full_name: string | null;
-    email: string | null;
-  } | null;
+type BookingWithDetails = Tables<'bookings'> & {
+  listing_title?: string;
+  partner_name?: string;
+  user_name?: string;
+  user_email?: string;
 };
 
 const AdminBookings: React.FC = () => {
@@ -30,21 +23,46 @@ const AdminBookings: React.FC = () => {
 
   const fetchBookings = async () => {
     setLoading(true);
-    const { data, error } = await supabase
-      .from('bookings')
-      .select('*, listing:listings(title), profile:profiles(full_name, email)')
-      .order('created_at', { ascending: false });
-      
-    if (error) {
-      toast.error(error.message);
-    } else {
-      setBookings(data as any);
+    // Fetch all data sources in parallel to be more robust than a complex join
+    const [bookingsRes, listingsRes, profilesRes, partnersRes] = await Promise.all([
+        supabase.from('bookings').select('*').order('created_at', { ascending: false }),
+        supabase.from('listings').select('id, title, partner_id'),
+        supabase.from('profiles').select('id, full_name, email'),
+        supabase.from('partners').select('id, name')
+    ]);
+
+    if (bookingsRes.error || listingsRes.error || profilesRes.error || partnersRes.error) {
+        toast.error("Failed to fetch all booking details. Please check console for errors.");
+        console.error(bookingsRes.error || listingsRes.error || profilesRes.error || partnersRes.error);
+        setLoading(false);
+        return;
     }
+
+    // Create maps for quick, client-side joining
+    const listingsMap = new Map(listingsRes.data.map(l => [l.id, l]));
+    const profilesMap = new Map(profilesRes.data.map(p => [p.id, p]));
+    const partnersMap = new Map(partnersRes.data.map(p => [p.id, p]));
+
+    // Manually join the data
+    const detailedBookings = bookingsRes.data.map(booking => {
+        const listing = listingsMap.get(booking.listing_id || '');
+        const profile = profilesMap.get(booking.user_id || '');
+        const partner = listing ? partnersMap.get(listing.partner_id || '') : undefined;
+
+        return {
+            ...booking,
+            listing_title: listing?.title || 'N/A',
+            user_name: profile?.full_name || 'N/A',
+            user_email: profile?.email || 'N/A',
+            partner_name: partner?.name || 'Direct',
+        };
+    });
+
+    setBookings(detailedBookings);
     setLoading(false);
   };
 
   const handleStatusChange = async (bookingId: string, newStatus: string) => {
-    // Optimistically update the UI
     const originalBookings = [...bookings];
     setBookings(prevBookings => 
       prevBookings.map(b => 
@@ -59,7 +77,6 @@ const AdminBookings: React.FC = () => {
 
     if (error) {
       toast.error('Failed to update status.');
-      // Revert UI on error
       setBookings(originalBookings);
     } else {
       toast.success('Status updated successfully!');
@@ -90,27 +107,35 @@ const AdminBookings: React.FC = () => {
               <tr>
                 <th scope="col" className="px-6 py-3">Listing</th>
                 <th scope="col" className="px-6 py-3">User</th>
+                <th scope="col" className="px-6 py-3">Partner</th>
                 <th scope="col" className="px-6 py-3">Booking Date</th>
                 <th scope="col" className="px-6 py-3">Amount (KES)</th>
+                <th scope="col" className="px-6 py-3">Commission (KES)</th>
                 <th scope="col" className="px-6 py-3">Status</th>
-                <th scope="col" className="px-6 py-3">Requested At</th>
               </tr>
             </thead>
             <tbody>
               {bookings.map((booking) => (
                 <tr key={booking.id} className="bg-white border-b hover:bg-gray-50">
                   <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                    {booking.listing?.title || 'N/A'}
+                    {booking.listing_title}
                   </th>
                   <td className="px-6 py-4">
                     <div className="flex items-center">
                       <User className="h-4 w-4 mr-2 text-gray-400" />
                       <div>
-                        <div>{booking.profile?.full_name || 'N/A'}</div>
-                        <div className="text-xs text-gray-500">{booking.profile?.email}</div>
+                        <div>{booking.user_name}</div>
+                        <div className="text-xs text-gray-500">{booking.user_email}</div>
                       </div>
                     </div>
                   </td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center">
+                      <Users className="h-4 w-4 mr-2 text-gray-400" />
+                      {booking.partner_name}
+                    </div>
+                  </td>
+
                   <td className="px-6 py-4">
                     <div className="flex items-center">
                       <Calendar className="h-4 w-4 mr-2 text-gray-400" />
@@ -118,6 +143,7 @@ const AdminBookings: React.FC = () => {
                     </div>
                   </td>
                   <td className="px-6 py-4 font-medium text-gray-800">{formatToKes(booking.total_amount)}</td>
+                  <td className="px-6 py-4 font-medium text-blue-600">{booking.commission_owed ? formatToKes(booking.commission_owed) : 'N/A'}</td>
                   <td className="px-6 py-4">
                     <select
                       value={booking.payment_status || 'pending'}
@@ -130,7 +156,6 @@ const AdminBookings: React.FC = () => {
                       <option value="partial">Partial</option>
                     </select>
                   </td>
-                  <td className="px-6 py-4">{format(new Date(booking.created_at), 'dd MMM yyyy, HH:mm')}</td>
                 </tr>
               ))}
             </tbody>

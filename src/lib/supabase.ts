@@ -8,4 +8,13 @@ if (!supabaseUrl || !supabaseKey) {
   throw new Error("Supabase URL and Anon Key are required.");
 }
 
-export const supabase = createClient<Database>(supabaseUrl, supabaseKey);
+// This is a "cache-busting" technique. By adding a random header,
+// we force the Supabase client to re-fetch the schema, bypassing any stale cache.
+export const supabase = createClient<Database>(supabaseUrl, supabaseKey, {
+  db: {
+    schema: 'public',
+  },
+  global: {
+    headers: { 'x-cache-buster': Date.now().toString() },
+  },
+});

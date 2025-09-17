@@ -1,16 +1,17 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { LayoutDashboard, List, Settings, LogOut, MapPin, BookUser, Package } from 'lucide-react';
+import { LayoutDashboard, List, Settings, LogOut, MapPin, BookUser, Package, Users as UsersIcon } from 'lucide-react';
 
 const Sidebar: React.FC = () => {
   const { signOut, profile } = useAuth();
 
-  // CORRECTED: The paths now correctly point to the routes defined in App.tsx
   const navLinks = [
     { to: '/dashboard', icon: LayoutDashboard, text: 'Dashboard' },
     { to: '/listings', icon: List, text: 'Listings' },
     { to: '/bookings', icon: BookUser, text: 'Bookings' },
+    { to: '/partners', icon: UsersIcon, text: 'Partners' },
+    { to: '/users', icon: UsersIcon, text: 'Users' },
     { to: '/requests', icon: Package, text: 'Requests' },
     { to: '/settings', icon: Settings, text: 'Site Settings' },
   ];
@@ -26,7 +27,7 @@ const Sidebar: React.FC = () => {
           <NavLink
             key={link.text}
             to={link.to}
-            end // Use 'end' to prevent parent routes from staying active
+            end
             className={({ isActive }) =>
               `flex items-center px-4 py-2 rounded-lg transition-colors duration-200 ${
                 isActive ? 'bg-primary text-white' : 'hover:bg-gray-700'

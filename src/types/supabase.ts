@@ -12,6 +12,7 @@ export type Database = {
       bookings: {
         Row: {
           booking_date: string
+          commission_owed: number | null
           created_at: string
           id: string
           listing_id: string | null
@@ -24,6 +25,7 @@ export type Database = {
         }
         Insert: {
           booking_date: string
+          commission_owed?: number | null
           created_at?: string
           id?: string
           listing_id?: string | null
@@ -36,6 +38,7 @@ export type Database = {
         }
         Update: {
           booking_date?: string
+          commission_owed?: number | null
           created_at?: string
           id?: string
           listing_id?: string | null
@@ -107,6 +110,7 @@ export type Database = {
           images: string[] | null
           inclusions: string[] | null
           location: string | null
+          partner_id: string | null
           price: number
           rating: number | null
           status: string | null
@@ -124,6 +128,7 @@ export type Database = {
           images?: string[] | null
           inclusions?: string[] | null
           location?: string | null
+          partner_id?: string | null
           price: number
           rating?: number | null
           status?: string | null
@@ -141,12 +146,51 @@ export type Database = {
           images?: string[] | null
           inclusions?: string[] | null
           location?: string | null
+          partner_id?: string | null
           price?: number
           rating?: number | null
           status?: string | null
           sub_category?: string | null
           title?: string
           type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "listings_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      partners: {
+        Row: {
+          commission_rate: number
+          contact_person: string | null
+          created_at: string
+          email: string | null
+          id: string
+          name: string
+          phone: string | null
+        }
+        Insert: {
+          commission_rate: number
+          contact_person?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          name: string
+          phone?: string | null
+        }
+        Update: {
+          commission_rate?: number
+          contact_person?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          name?: string
+          phone?: string | null
         }
         Relationships: []
       }
@@ -162,7 +206,7 @@ export type Database = {
           created_at?: string
           email?: string | null
           full_name?: string | null
-          id?: string
+          id: string
           role?: string | null
         }
         Update: {
@@ -172,20 +216,34 @@ export type Database = {
           id?: string
           role?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       site_settings: {
         Row: {
           banner_url: string | null
           id: number
+          logo_url: string | null
+          primary_color: string | null
         }
         Insert: {
           banner_url?: string | null
           id: number
+          logo_url?: string | null
+          primary_color?: string | null
         }
         Update: {
           banner_url?: string | null
           id?: number
+          logo_url?: string | null
+          primary_color?: string | null
         }
         Relationships: []
       }
@@ -194,7 +252,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      is_admin: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never

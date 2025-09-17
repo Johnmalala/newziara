@@ -4,7 +4,7 @@ import { Toaster } from 'react-hot-toast';
 
 import { AuthProvider } from './context/AuthContext';
 import { SettingsProvider, useSettings } from './context/SettingsContext';
-import { CurrencyProvider } from './context/CurrencyContext'; // Import CurrencyProvider
+import { CurrencyProvider } from './context/CurrencyContext';
 
 import Header from './components/Layout/Header';
 import Footer from './components/Layout/Footer';
@@ -26,10 +26,11 @@ import ListingFormPage from './pages/admin/ListingFormPage';
 import AdminBookings from './pages/admin/AdminBookings';
 import AdminRequests from './pages/admin/AdminRequests';
 import AdminSettings from './pages/admin/AdminSettings';
+import AdminPartners from './pages/admin/AdminPartners';
+import AdminUsers from './pages/admin/AdminUsers'; // Import the new Users page
 import ProtectedRoute from './components/admin/ProtectedRoute';
 
 function App() {
-  // Temporary change for local development: Force admin view
   const isAdminSubdomain = true;
 
   return (
@@ -60,6 +61,8 @@ const AdminRoutes = () => (
       <Route path="listings/edit/:id" element={<ListingFormPage />} />
       <Route path="bookings" element={<AdminBookings />} />
       <Route path="requests" element={<AdminRequests />} />
+      <Route path="partners" element={<AdminPartners />} />
+      <Route path="users" element={<AdminUsers />} /> {/* Add the new Users route */}
       <Route path="settings" element={<AdminSettings />} />
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Route>

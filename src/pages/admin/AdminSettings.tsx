@@ -99,6 +99,7 @@ const AdminSettings: React.FC = () => {
               <button type="button" onClick={() => bannerInputRef.current?.click()} className="mt-4 text-sm font-medium text-primary hover:text-red-500">
                 Change Banner Image
               </button>
+              <p className="text-xs text-gray-500 mt-2">Recommended dimensions: 1920x1080px</p>
             </div>
           </div>
 

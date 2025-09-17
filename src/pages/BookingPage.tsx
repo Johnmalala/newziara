@@ -9,7 +9,9 @@ import { Tables, TablesInsert } from '../types/supabase';
 import AvailabilityCalendar from '../components/ui/AvailabilityCalendar';
 import { useCurrency } from '../context/CurrencyContext';
 
-type Listing = Tables<'listings'>;
+type ListingWithPartner = Tables<'listings'> & {
+  partner?: Tables<'partners'> | null;
+};
 type BookingInsert = TablesInsert<'bookings'>;
 
 const BookingPage: React.FC = () => {
@@ -17,12 +19,13 @@ const BookingPage: React.FC = () => {
   const navigate = useNavigate();
   const { user, profile, session } = useAuth();
   const { convertPrice } = useCurrency();
-  const { listing, selectedDate: initialDate, guests } = (location.state || {}) as {
-    listing: Listing;
+  const { listing: initialListing, selectedDate: initialDate, guests } = (location.state || {}) as {
+    listing: Tables<'listings'>;
     selectedDate: string;
     guests: number;
   };
 
+  const [listing, setListing] = useState<ListingWithPartner | null>(null);
   const [selectedDate, setSelectedDate] = useState<string | null>(initialDate);
   const [formData, setFormData] = useState({ name: '', email: '', phone: '' });
   const [isLoading, setIsLoading] = useState(false);
@@ -40,13 +43,39 @@ const BookingPage: React.FC = () => {
   }, [profile]);
 
   useEffect(() => {
-    const fetchBookedDates = async () => {
-      if (!listing) return;
-      const { data } = await supabase.from('bookings').select('booking_date').eq('listing_id', listing.id);
-      setBookedDates(data?.map(b => b.booking_date) || []);
+    const fetchFullListingData = async () => {
+      if (!initialListing?.id) return;
+
+      // Fetch listing and partner separately to be more robust
+      const { data: listingData, error: listingError } = await supabase
+        .from('listings')
+        .select('*')
+        .eq('id', initialListing.id)
+        .single();
+      
+      if (listingError || !listingData) {
+        setListing(null);
+        return;
+      }
+
+      let partnerData: Tables<'partners'> | null = null;
+      if (listingData.partner_id) {
+        const { data: pData } = await supabase
+          .from('partners')
+          .select('*')
+          .eq('id', listingData.partner_id)
+          .single();
+        partnerData = pData;
+      }
+
+      setListing({ ...listingData, partner: partnerData });
+
+      // Fetch booked dates
+      const { data: bookingData } = await supabase.from('bookings').select('booking_date').eq('listing_id', initialListing.id);
+      setBookedDates(bookingData?.map(b => b.booking_date) || []);
     };
-    fetchBookedDates();
-  }, [listing]);
+    fetchFullListingData();
+  }, [initialListing?.id]);
 
   if (!listing) {
     return (
@@ -76,13 +105,21 @@ const BookingPage: React.FC = () => {
     }
     setIsLoading(true);
 
+    const totalAmount = listing.price * guests;
+    let commissionOwed: number | null = null;
+
+    if (listing.partner && listing.partner.commission_rate) {
+      commissionOwed = totalAmount * listing.partner.commission_rate;
+    }
+
     const bookingData: BookingInsert = {
       listing_id: listing.id,
       user_id: user?.id,
       booking_date: selectedDate,
-      total_amount: listing.price * guests, // Always store in base currency (USD)
+      total_amount: totalAmount,
       payment_plan: 'arrival',
       payment_status: 'pending',
+      commission_owed: commissionOwed,
     };
 
     const { error } = await supabase.from('bookings').insert(bookingData);

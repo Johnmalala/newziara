@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
-import { TablesInsert } from '../../types/supabase';
+import { Tables, TablesInsert } from '../../types/supabase';
 import toast from 'react-hot-toast';
 import { Save, Loader, ArrowLeft, UploadCloud, X } from 'lucide-react';
 import AdminAvailabilityCalendar from '../../components/admin/AdminAvailabilityCalendar';
@@ -9,23 +9,31 @@ import TagInput from '../../components/admin/TagInput';
 import { motion } from 'framer-motion';
 
 type ListingInsert = TablesInsert<'listings'>;
+type Partner = Tables<'partners'>;
 
 const ListingFormPage: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [formData, setFormData] = useState<Partial<ListingInsert>>({
     title: '', description: '', price: 0, category: 'tour', status: 'draft',
-    location: '', images: [], inclusions: [], exclusions: [], availability: []
+    location: '', images: [], inclusions: [], exclusions: [], availability: [], partner_id: null
   });
+  const [partners, setPartners] = useState<Partner[]>([]);
   const [newImageFiles, setNewImageFiles] = useState<File[]>([]);
   const [existingImageUrls, setExistingImageUrls] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    if (id) {
-      const fetchListing = async () => {
-        setLoading(true);
+    const fetchData = async () => {
+      setLoading(true);
+
+      // Fetch partners
+      const { data: partnersData } = await supabase.from('partners').select('*').order('name');
+      setPartners(partnersData || []);
+
+      // Fetch listing if editing
+      if (id) {
         const { data, error } = await supabase.from('listings').select('*').eq('id', id).single();
         if (error) {
           toast.error('Could not fetch listing data.');
@@ -34,12 +42,10 @@ const ListingFormPage: React.FC = () => {
           setFormData(data);
           setExistingImageUrls(data.images || []);
         }
-        setLoading(false);
-      };
-      fetchListing();
-    } else {
+      }
       setLoading(false);
-    }
+    };
+    fetchData();
   }, [id, navigate]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -101,7 +107,6 @@ const ListingFormPage: React.FC = () => {
       
       const failedUploads = uploadResults.filter(result => result.error);
       if (failedUploads.length > 0) {
-        // Log the actual error for debugging
         console.error("Supabase Storage Error:", failedUploads[0].error);
         toast.error(`Failed to upload ${failedUploads.length} image(s). Check console for details.`);
         setSaving(false);
@@ -118,6 +123,7 @@ const ListingFormPage: React.FC = () => {
 
     const dataToSave: ListingInsert = {
       ...formData,
+      partner_id: formData.partner_id || null,
       price: formData.price || 0,
       title: formData.title || 'Untitled',
       images: finalImageUrls,
@@ -198,6 +204,15 @@ const ListingFormPage: React.FC = () => {
                     <option value="tour">Tour</option>
                     <option value="stay">Stay</option>
                     <option value="volunteer">Volunteer</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Partner</label>
+                  <select name="partner_id" value={formData.partner_id || ''} onChange={handleChange} className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary">
+                    <option value="">Direct (No Partner)</option>
+                    {partners.map(partner => (
+                      <option key={partner.id} value={partner.id}>{partner.name}</option>
+                    ))}
                   </select>
                 </div>
                 <div>
