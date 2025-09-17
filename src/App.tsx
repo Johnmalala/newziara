@@ -33,7 +33,7 @@ import AdminSettings from './pages/admin/AdminSettings';
 import ProtectedRoute from './components/admin/ProtectedRoute';
 
 function App() {
-  const isAdminSubdomain = false; // Changed to false to show the public site
+  const isAdminSubdomain = false; // Changed to false to show the main website
 
   return (
     <AuthProvider>

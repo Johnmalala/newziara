@@ -9,14 +9,18 @@ type SiteSettingsUpdate = TablesUpdate<'site_settings'>;
 
 const AdminSettings: React.FC = () => {
   const { signOut } = useAuth();
-  const [settings, setSettings] = useState<SiteSettingsUpdate>({ id: 1, banner_url: '', primary_color: '#dc2626' });
+  const [settings, setSettings] = useState<SiteSettingsUpdate>({ id: 1, banner_url: '', primary_color: '#dc2626', auth_background_url: '' });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
   const [bannerFile, setBannerFile] = useState<File | null>(null);
   const [bannerPreview, setBannerPreview] = useState<string | null>(null);
+  
+  const [authBgFile, setAuthBgFile] = useState<File | null>(null);
+  const [authBgPreview, setAuthBgPreview] = useState<string | null>(null);
 
   const bannerInputRef = useRef<HTMLInputElement>(null);
+  const authBgInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -27,17 +31,23 @@ const AdminSettings: React.FC = () => {
       } else if (data) {
         setSettings(data);
         setBannerPreview(data.banner_url || null);
+        setAuthBgPreview(data.auth_background_url || null);
       }
       setLoading(false);
     };
     fetchSettings();
   }, []);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'banner' | 'authBg') => {
     const file = e.target.files?.[0];
     if (file) {
-      setBannerFile(file);
-      setBannerPreview(URL.createObjectURL(file));
+      if (type === 'banner') {
+        setBannerFile(file);
+        setBannerPreview(URL.createObjectURL(file));
+      } else {
+        setAuthBgFile(file);
+        setAuthBgPreview(URL.createObjectURL(file));
+      }
     }
   };
 
@@ -57,6 +67,14 @@ const AdminSettings: React.FC = () => {
         const { data: { publicUrl } } = supabase.storage.from('site-assets').getPublicUrl(data.path);
         dataToUpdate.banner_url = publicUrl;
       }
+      
+      if (authBgFile) {
+        const fileName = `auth-bg-${Date.now()}`;
+        const { data, error } = await supabase.storage.from('site-assets').upload(fileName, authBgFile, { upsert: true });
+        if (error) throw error;
+        const { data: { publicUrl } } = supabase.storage.from('site-assets').getPublicUrl(data.path);
+        dataToUpdate.auth_background_url = publicUrl;
+      }
 
       const { error: dbError } = await supabase.from('site_settings').update(dataToUpdate).eq('id', 1);
       if (dbError) throw dbError;
@@ -67,7 +85,9 @@ const AdminSettings: React.FC = () => {
       if (updatedData) {
         setSettings(updatedData);
         setBannerPreview(updatedData.banner_url || null);
+        setAuthBgPreview(updatedData.auth_background_url || null);
         setBannerFile(null);
+        setAuthBgFile(null);
       }
 
     } catch (error: any) {
@@ -97,11 +117,29 @@ const AdminSettings: React.FC = () => {
                   <ImageIcon className="h-16 w-16 text-gray-400" />
                 )}
               </div>
-              <input type="file" ref={bannerInputRef} onChange={handleFileChange} accept="image/*" className="hidden" />
+              <input type="file" ref={bannerInputRef} onChange={(e) => handleFileChange(e, 'banner')} accept="image/*" className="hidden" />
               <button type="button" onClick={() => bannerInputRef.current?.click()} className="mt-4 text-sm font-medium text-primary hover:text-red-500">
                 Change Banner Image
               </button>
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">Recommended dimensions: 1920x1080px</p>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Authentication Page Background</label>
+            <div className="mt-2 flex flex-col items-center">
+              <div className="w-full h-48 bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center overflow-hidden">
+                {authBgPreview ? (
+                  <img src={authBgPreview} alt="Auth Background Preview" className="w-full h-full object-cover" />
+                ) : (
+                  <ImageIcon className="h-16 w-16 text-gray-400" />
+                )}
+              </div>
+              <input type="file" ref={authBgInputRef} onChange={(e) => handleFileChange(e, 'authBg')} accept="image/*" className="hidden" />
+              <button type="button" onClick={() => authBgInputRef.current?.click()} className="mt-4 text-sm font-medium text-primary hover:text-red-500">
+                Change Auth Image
+              </button>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">Recommended dimensions: 800x1200px</p>
             </div>
           </div>
 

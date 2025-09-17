@@ -279,18 +279,21 @@ export type Database = {
       }
       site_settings: {
         Row: {
+          auth_background_url: string | null
           banner_url: string | null
           id: number
           logo_url: string | null
           primary_color: string | null
         }
         Insert: {
+          auth_background_url?: string | null
           banner_url?: string | null
           id: number
           logo_url?: string | null
           primary_color?: string | null
         }
         Update: {
+          auth_background_url?: string | null
           banner_url?: string | null
           id?: number
           logo_url?: string | null

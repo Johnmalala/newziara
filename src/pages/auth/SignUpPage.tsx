@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import toast from 'react-hot-toast';
-import { Mail, Lock, User as UserIcon, Loader } from 'lucide-react';
+import { Mail, Lock, User as UserIcon, Loader, MapPin } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useSettings } from '../../context/SettingsContext';
 
 const SignUpPage: React.FC = () => {
   const [fullName, setFullName] = useState('');
@@ -11,6 +12,7 @@ const SignUpPage: React.FC = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { settings } = useSettings();
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,8 +48,11 @@ const SignUpPage: React.FC = () => {
           className="max-w-md w-full space-y-8"
         >
           <div>
-            <Link to="/" className="text-2xl text-gray-900">
-              <span className="font-bold">ZIARA</span><span className="font-light">zetu</span>
+            <Link to="/" className="flex items-center justify-center space-x-2 text-2xl text-gray-900">
+              <MapPin className="h-7 w-7 text-primary" />
+              <span>
+                <span className="font-bold">ZIARA</span><span className="font-light">zetu</span>
+              </span>
             </Link>
             <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
               Create a new account
@@ -128,8 +133,8 @@ const SignUpPage: React.FC = () => {
       <div className="hidden lg:block relative">
         <img
           className="absolute inset-0 h-full w-full object-cover"
-          src="https://images.unsplash.com/photo-1534437431053-56b334c03a4e?w=1200"
-          alt="Beautiful beach landscape"
+          src={settings?.auth_background_url || "https://images.unsplash.com/photo-1523805009345-7448845a9e53?w=1200"}
+          alt="Beautiful safari landscape"
         />
         <div className="absolute inset-0 bg-black/30"></div>
       </div>

@@ -5,6 +5,7 @@ const Footer: React.FC = () => {
   const Logo = () => {
     return (
       <div className="flex items-center space-x-2">
+        <MapPin className="h-7 w-7 text-primary" />
         <span className="text-2xl">
           <span className="font-bold">ZIARA</span><span className="font-light">zetu</span>
         </span>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, User, LogOut, LayoutDashboard, Globe, ChevronDown } from 'lucide-react';
+import { Menu, X, User, LogOut, LayoutDashboard, Globe, ChevronDown, MapPin } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext';
 import { useCurrency } from '../../context/CurrencyContext';
@@ -11,7 +11,6 @@ const Header: React.FC = () => {
   const { session, signOut, profile, isAdmin } = useAuth();
 
   const navigation = [
-    { name: 'Home', href: '/' },
     { name: 'Tours', href: '/tours' },
     { name: 'Stays', href: '/stays' },
     { name: 'Volunteer', href: '/volunteers' },
@@ -23,6 +22,7 @@ const Header: React.FC = () => {
   const Logo = () => {
     return (
       <div className="flex items-center space-x-2">
+        <MapPin className="h-7 w-7 text-primary" />
         <span className="text-2xl text-gray-900">
           <span className="font-bold">ZIARA</span><span className="font-light">zetu</span>
         </span>
