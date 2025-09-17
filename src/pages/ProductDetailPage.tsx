@@ -1,25 +1,32 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
   ArrowLeft, MapPin, Star, Users, Check, X, ChevronLeft, ChevronRight,
-  Heart, Share2, Clock, Shield, Loader
+  Heart, Share2, Clock, Shield, Loader, Calendar
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { Tables } from '../types/supabase';
 import AvailabilityCalendar from '../components/ui/AvailabilityCalendar';
 import { useCurrency } from '../context/CurrencyContext';
+import { differenceInCalendarDays, format, parseISO } from 'date-fns';
 
 type Listing = Tables<'listings'>;
+type Range = { start: string | null; end: string | null };
 
 const ProductDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const { convertPrice } = useCurrency();
   const [listing, setListing] = useState<Listing | null>(null);
   const [bookedDates, setBookedDates] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  
+  // Unified state for selection
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [selectedRange, setSelectedRange] = useState<Range>({ start: null, end: null });
+
   const [guests, setGuests] = useState(1);
 
   useEffect(() => {
@@ -39,18 +46,48 @@ const ProductDetailPage: React.FC = () => {
         setListing(listingData);
         const { data: bookingData } = await supabase
           .from('bookings')
-          .select('booking_date')
+          .select('booking_date, check_out_date')
           .eq('listing_id', id);
         
-        setBookedDates(bookingData?.map(b => b.booking_date) || []);
+        // Expand booked ranges into individual dates
+        const allBookedDates: string[] = [];
+        bookingData?.forEach(b => {
+          if (b.check_out_date) {
+            const start = parseISO(b.booking_date);
+            const end = parseISO(b.check_out_date);
+            for (let d = start; d <= end; d.setDate(d.getDate() + 1)) {
+              allBookedDates.push(format(d, 'yyyy-MM-dd'));
+            }
+          } else {
+            allBookedDates.push(b.booking_date);
+          }
+        });
+        setBookedDates(allBookedDates);
       }
       
       setLoading(false);
       setSelectedDate(null);
+      setSelectedRange({ start: null, end: null });
     };
 
     fetchListingData();
   }, [id]);
+  
+  const isStay = listing?.category === 'stay';
+  const numberOfNights = isStay && selectedRange.start && selectedRange.end 
+    ? differenceInCalendarDays(parseISO(selectedRange.end), parseISO(selectedRange.start))
+    : 1;
+  const totalPrice = isStay 
+    ? listing?.price * Math.max(1, numberOfNights) * guests 
+    : listing?.price * guests;
+
+  const isBookingDisabled = isStay ? !(selectedRange.start && selectedRange.end) : !selectedDate;
+
+  const handleBooking = () => {
+    if (!isBookingDisabled) {
+      navigate('/booking', { state: { listing, selectedDate, selectedRange, guests } });
+    }
+  };
 
   if (loading) {
     return (
@@ -72,7 +109,6 @@ const ProductDetailPage: React.FC = () => {
   const images = listing.images || ['https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800'];
   const nextImage = () => setCurrentImageIndex((p) => (p + 1) % images.length);
   const prevImage = () => setCurrentImageIndex((p) => (p - 1 + images.length) % images.length);
-  const isBookingDisabled = !selectedDate;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -91,6 +127,7 @@ const ProductDetailPage: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-8">
+            {/* Image Gallery and Details remain the same */}
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-2xl shadow-lg overflow-hidden">
               <div className="relative h-96 md:h-[500px]">
                 <img src={images[currentImageIndex]} alt={listing.title} className="w-full h-full object-cover" />
@@ -150,14 +187,37 @@ const ProductDetailPage: React.FC = () => {
             <div className="sticky top-28"><div className="bg-white rounded-2xl shadow-lg p-6">
               <div className="text-center mb-6"><div className="text-3xl font-bold text-primary">{convertPrice(listing.price)}</div><div className="text-sm text-gray-500">{listing.category === 'stay' ? 'per night' : 'per person'}</div></div>
               <div className="space-y-4">
-                <div><label className="block text-sm font-medium text-gray-700 mb-2">Select Date</label><AvailabilityCalendar availableDates={listing.availability as string[] | undefined} bookedDates={bookedDates} selectedDate={selectedDate} onDateSelect={setSelectedDate} /></div>
-                <div><label className="block text-sm font-medium text-gray-700 mb-2">{listing.category === 'stay' ? 'Guests' : 'Travellers'}</label><select value={guests} onChange={(e) => setGuests(Number(e.target.value))} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary">{[1, 2, 3, 4, 5, 6, 7, 8].map(n => <option key={n} value={n}>{n} {n === 1 ? (listing.category === 'stay' ? 'Guest' : 'Traveller') : (listing.category === 'stay' ? 'Guests' : 'Travellers')}</option>)}</select></div>
+                {isStay ? (
+                  <div>
+                    <div className="grid grid-cols-2 gap-2 mb-4">
+                      <div className="text-center p-2 border rounded-lg">
+                        <label className="text-xs text-gray-500">CHECK-IN</label>
+                        <p className="font-semibold">{selectedRange.start ? format(parseISO(selectedRange.start), 'dd MMM') : 'Select date'}</p>
+                      </div>
+                      <div className="text-center p-2 border rounded-lg">
+                        <label className="text-xs text-gray-500">CHECK-OUT</label>
+                        <p className="font-semibold">{selectedRange.end ? format(parseISO(selectedRange.end), 'dd MMM') : 'Select date'}</p>
+                      </div>
+                    </div>
+                    <AvailabilityCalendar mode="range" availableDates={listing.availability as string[] | undefined} bookedDates={bookedDates} selectedRange={selectedRange} onRangeSelect={setSelectedRange} selectedDate={null} onDateSelect={()=>{}} />
+                  </div>
+                ) : (
+                  <div><label className="block text-sm font-medium text-gray-700 mb-2">Select Date</label><AvailabilityCalendar mode="single" availableDates={listing.availability as string[] | undefined} bookedDates={bookedDates} selectedDate={selectedDate} onDateSelect={setSelectedDate} selectedRange={{start: null, end: null}} onRangeSelect={()=>{}} /></div>
+                )}
+                <div><label className="block text-sm font-medium text-gray-700 mb-2">{isStay ? 'Guests' : 'Travellers'}</label><select value={guests} onChange={(e) => setGuests(Number(e.target.value))} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary">{[1, 2, 3, 4, 5, 6, 7, 8].map(n => <option key={n} value={n}>{n} {n === 1 ? (isStay ? 'Guest' : 'Traveller') : (isStay ? 'Guests' : 'Travellers')}</option>)}</select></div>
                 <div className="border-t pt-4">
-                  <div className="flex justify-between items-center mb-2"><span className="text-gray-600">{convertPrice(listing.price)} x {guests} {listing.category === 'stay' ? 'night' : 'person'}</span><span className="font-medium">{convertPrice(listing.price * guests)}</span></div>
-                  <div className="flex justify-between items-center font-bold text-lg"><span>Total</span><span className="text-primary">{convertPrice(listing.price * guests)}</span></div>
+                  {isStay && selectedRange.start && selectedRange.end ? (
+                    <>
+                      <div className="flex justify-between items-center mb-2 text-gray-600"><span>{convertPrice(listing.price)} x {numberOfNights} nights</span><span>{convertPrice(listing.price * numberOfNights)}</span></div>
+                      <div className="flex justify-between items-center mb-2 text-gray-600"><span>Guests</span><span>{guests}</span></div>
+                    </>
+                  ) : (
+                    <div className="flex justify-between items-center mb-2 text-gray-600"><span>{convertPrice(listing.price)} x {guests} {isStay ? 'night' : 'person'}</span><span>{convertPrice(listing.price * guests)}</span></div>
+                  )}
+                  <div className="flex justify-between items-center font-bold text-lg"><span>Total</span><span className="text-primary">{convertPrice(totalPrice || 0)}</span></div>
                 </div>
-                <Link to={!isBookingDisabled ? "/booking" : '#'} state={{ listing, selectedDate, guests }} aria-disabled={isBookingDisabled} className={`block w-full text-center bg-primary text-white py-4 rounded-lg text-lg font-semibold hover:brightness-90 ${isBookingDisabled ? 'bg-gray-400 cursor-not-allowed hover:bg-gray-400' : ''}`}>Book Now - Pay on Arrival</Link>
-                <div className="text-center text-sm text-gray-500">{selectedDate ? `You won't be charged until arrival.` : 'Please select a date to book.'}</div>
+                <button onClick={handleBooking} disabled={isBookingDisabled} className={`w-full text-center bg-primary text-white py-4 rounded-lg text-lg font-semibold hover:brightness-90 ${isBookingDisabled ? 'bg-gray-400 cursor-not-allowed hover:bg-gray-400' : ''}`}>Book Now - Pay on Arrival</button>
+                <div className="text-center text-sm text-gray-500">{isBookingDisabled ? 'Please select your dates to book.' : `You won't be charged until arrival.`}</div>
               </div>
             </div></div>
           </motion.div>
