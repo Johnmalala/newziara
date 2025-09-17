@@ -5,6 +5,7 @@ import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
 import { SettingsProvider, useSettings } from './context/SettingsContext';
 import { CurrencyProvider } from './context/CurrencyContext';
+import { ThemeProvider } from './context/ThemeContext';
 
 import Header from './components/Layout/Header';
 import Footer from './components/Layout/Footer';
@@ -25,19 +26,26 @@ import AdminListings from './pages/admin/AdminListings';
 import ListingFormPage from './pages/admin/ListingFormPage';
 import AdminBookings from './pages/admin/AdminBookings';
 import AdminRequests from './pages/admin/AdminRequests';
-import AdminSettings from './pages/admin/AdminSettings';
 import AdminPartners from './pages/admin/AdminPartners';
-import AdminUsers from './pages/admin/AdminUsers'; // Import the new Users page
+import AdminUsers from './pages/admin/AdminUsers';
+import AdminReviews from './pages/admin/AdminReviews';
+import AdminSettings from './pages/admin/AdminSettings';
 import ProtectedRoute from './components/admin/ProtectedRoute';
 
 function App() {
-  const isAdminSubdomain = false;
+  const isAdminSubdomain = true; // Changed to true for local admin development
 
   return (
     <AuthProvider>
       <Router>
         <Toaster position="top-center" reverseOrder={false} />
-        {isAdminSubdomain ? <AdminRoutes /> : <PublicSite />}
+        {isAdminSubdomain ? (
+          <ThemeProvider>
+            <AdminRoutes />
+          </ThemeProvider>
+        ) : (
+          <PublicSite />
+        )}
       </Router>
     </AuthProvider>
   );
@@ -62,7 +70,8 @@ const AdminRoutes = () => (
       <Route path="bookings" element={<AdminBookings />} />
       <Route path="requests" element={<AdminRequests />} />
       <Route path="partners" element={<AdminPartners />} />
-      <Route path="users" element={<AdminUsers />} /> {/* Add the new Users route */}
+      <Route path="users" element={<AdminUsers />} />
+      <Route path="reviews" element={<AdminReviews />} />
       <Route path="settings" element={<AdminSettings />} />
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Route>

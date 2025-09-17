@@ -31,20 +31,20 @@ const AdminAvailabilityCalendar: React.FC<AdminAvailabilityCalendarProps> = ({ s
   const startingDayIndex = getDay(startOfMonth(currentMonth));
 
   return (
-    <div className="bg-white rounded-lg p-4">
+    <div className="bg-white dark:bg-gray-800 rounded-lg p-4">
       <div className="flex items-center justify-between mb-4">
-        <button type="button" onClick={() => setCurrentMonth(subMonths(currentMonth, 1))} className="p-2 rounded-full hover:bg-gray-100">
-          <ChevronLeft className="h-5 w-5 text-gray-600" />
+        <button type="button" onClick={() => setCurrentMonth(subMonths(currentMonth, 1))} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
+          <ChevronLeft className="h-5 w-5 text-gray-600 dark:text-gray-300" />
         </button>
-        <div className="font-semibold text-gray-800">
+        <div className="font-semibold text-gray-800 dark:text-gray-100">
           {format(currentMonth, 'MMMM yyyy')}
         </div>
-        <button type="button" onClick={() => setCurrentMonth(addMonths(currentMonth, 1))} className="p-2 rounded-full hover:bg-gray-100">
-          <ChevronRight className="h-5 w-5 text-gray-600" />
+        <button type="button" onClick={() => setCurrentMonth(addMonths(currentMonth, 1))} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
+          <ChevronRight className="h-5 w-5 text-gray-600 dark:text-gray-300" />
         </button>
       </div>
 
-      <div className="grid grid-cols-7 gap-1 text-center text-xs text-gray-500 mb-2">
+      <div className="grid grid-cols-7 gap-1 text-center text-xs text-gray-500 dark:text-gray-400 mb-2">
         {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(day => (
           <div key={day}>{day}</div>
         ))}
@@ -61,13 +61,13 @@ const AdminAvailabilityCalendar: React.FC<AdminAvailabilityCalendarProps> = ({ s
           
           let buttonClass = 'w-9 h-9 flex items-center justify-center rounded-full text-sm transition-colors ';
           if (isDayPast) {
-            buttonClass += 'text-gray-300 cursor-not-allowed';
+            buttonClass += 'text-gray-300 dark:text-gray-600 cursor-not-allowed';
           } else {
-            buttonClass += 'hover:bg-red-100 ';
+            buttonClass += 'hover:bg-red-100 dark:hover:bg-red-900/50 ';
             if (isSelected) {
               buttonClass += 'bg-primary text-white font-semibold';
             } else {
-              buttonClass += 'text-gray-700';
+              buttonClass += 'text-gray-700 dark:text-gray-200';
             }
           }
 

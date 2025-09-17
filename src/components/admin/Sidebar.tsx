@@ -2,8 +2,9 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useAdminLayout } from '../../context/AdminLayoutContext';
-import { LayoutDashboard, List, Settings, LogOut, MapPin, BookUser, Package, Users as UsersIcon, X } from 'lucide-react';
+import { LayoutDashboard, List, Settings, LogOut, MapPin, BookUser, Package, Users as UsersIcon, Star, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import ThemeToggle from './ThemeToggle';
 
 const Sidebar: React.FC = () => {
   const { signOut, profile } = useAuth();
@@ -15,13 +16,14 @@ const Sidebar: React.FC = () => {
     { to: '/bookings', icon: BookUser, text: 'Bookings' },
     { to: '/partners', icon: UsersIcon, text: 'Partners' },
     { to: '/users', icon: UsersIcon, text: 'Users' },
+    { to: '/reviews', icon: Star, text: 'Reviews' },
     { to: '/requests', icon: Package, text: 'Requests' },
     { to: '/settings', icon: Settings, text: 'Site Settings' },
   ];
 
   const SidebarContent = () => (
-    <div className="w-64 bg-gray-800 text-white flex flex-col h-full">
-      <div className="flex items-center justify-between h-16 px-4 border-b border-gray-700">
+    <div className="w-64 bg-gray-800 dark:bg-gray-900 text-white flex flex-col h-full">
+      <div className="flex items-center justify-between h-16 px-4 border-b border-gray-700 dark:border-gray-800 flex-shrink-0">
         <div className="flex items-center">
           <MapPin className="h-8 w-8 text-primary" />
           <span className="text-2xl font-bold ml-2">Ziarazetu</span>
@@ -30,7 +32,9 @@ const Sidebar: React.FC = () => {
           <X className="h-6 w-6" />
         </button>
       </div>
-      <nav className="flex-1 px-4 py-6 space-y-2">
+      
+      {/* FIX: Added overflow-y-auto to make nav scrollable and prevent footer from being pushed off-screen */}
+      <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
         {navLinks.map(link => (
           <NavLink
             key={link.text}
@@ -39,7 +43,7 @@ const Sidebar: React.FC = () => {
             onClick={closeSidebar}
             className={({ isActive }) =>
               `flex items-center px-4 py-2 rounded-lg transition-colors duration-200 ${
-                isActive ? 'bg-primary text-white' : 'hover:bg-gray-700'
+                isActive ? 'bg-primary text-white' : 'text-gray-300 hover:bg-gray-700 dark:hover:bg-gray-700 hover:text-white'
               }`
             }
           >
@@ -48,14 +52,20 @@ const Sidebar: React.FC = () => {
           </NavLink>
         ))}
       </nav>
-      <div className="px-4 py-6 border-t border-gray-700">
+
+      {/* FIX: This is the footer area that was having issues */}
+      <div className="px-4 py-6 border-t border-gray-700 dark:border-gray-800 flex-shrink-0">
         <div className="mb-4">
-          <p className="text-sm font-semibold truncate">{profile?.full_name}</p>
-          <p className="text-xs text-gray-400 truncate">{profile?.email}</p>
+          <p className="text-sm font-semibold text-white break-words">{profile?.full_name}</p>
+          <p className="text-xs text-gray-400 break-words">{profile?.email}</p>
         </div>
+        <div className="hidden lg:block mb-4">
+          <ThemeToggle />
+        </div>
+        {/* FIX: Made text color brighter (text-gray-300) to ensure visibility */}
         <button
           onClick={signOut}
-          className="w-full flex items-center px-4 py-2 rounded-lg text-left hover:bg-primary transition-colors duration-200"
+          className="w-full flex items-center px-4 py-2 rounded-lg text-left text-gray-300 hover:bg-primary hover:text-white transition-colors duration-200"
         >
           <LogOut className="h-5 w-5 mr-3" />
           Sign Out

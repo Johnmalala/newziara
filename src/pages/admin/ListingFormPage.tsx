@@ -152,63 +152,63 @@ const ListingFormPage: React.FC = () => {
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
       <div className="flex items-center mb-8">
-        <button onClick={() => navigate('/listings')} className="p-2 rounded-full hover:bg-gray-200 mr-2">
-          <ArrowLeft className="h-5 w-5" />
+        <button onClick={() => navigate('/listings')} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 mr-2">
+          <ArrowLeft className="h-5 w-5 text-gray-800 dark:text-gray-200" />
         </button>
-        <h1 className="text-3xl font-bold text-gray-800">{id ? 'Edit Listing' : 'Create New Listing'}</h1>
+        <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">{id ? 'Edit Listing' : 'Create New Listing'}</h1>
       </div>
       <form onSubmit={handleSubmit} className="space-y-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
           <div className="lg:col-span-2 space-y-8">
-            <div className="bg-white p-8 rounded-lg shadow-md">
-              <h2 className="text-xl font-semibold text-gray-800 mb-6">Listing Details</h2>
+            <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md">
+              <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-6">Listing Details</h2>
               <div className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Title</label>
-                  <input type="text" name="title" value={formData.title || ''} onChange={handleChange} className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary" required />
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Title</label>
+                  <input type="text" name="title" value={formData.title || ''} onChange={handleChange} className="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:ring-primary focus:border-primary" required />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Description</label>
-                  <textarea name="description" value={formData.description || ''} onChange={handleChange} rows={5} className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary"></textarea>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
+                  <textarea name="description" value={formData.description || ''} onChange={handleChange} rows={5} className="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:ring-primary focus:border-primary"></textarea>
                 </div>
               </div>
             </div>
-            <div className="bg-white p-8 rounded-lg shadow-md">
-              <h2 className="text-xl font-semibold text-gray-800 mb-6">Features</h2>
+            <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md">
+              <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-6">Features</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Inclusions</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Inclusions</label>
                   <TagInput value={formData.inclusions || []} onChange={(tags) => handleTagChange('inclusions', tags)} placeholder="Add inclusion..." />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Exclusions</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Exclusions</label>
                   <TagInput value={formData.exclusions || []} onChange={(tags) => handleTagChange('exclusions', tags)} placeholder="Add exclusion..." />
                 </div>
               </div>
             </div>
           </div>
           <div className="lg:col-span-1 space-y-8">
-            <div className="bg-white p-8 rounded-lg shadow-md">
-              <h2 className="text-xl font-semibold text-gray-800 mb-6">Settings</h2>
+            <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md">
+              <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-6">Settings</h2>
               <div className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Status</label>
-                  <select name="status" value={formData.status || 'draft'} onChange={handleChange} className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Status</label>
+                  <select name="status" value={formData.status || 'draft'} onChange={handleChange} className="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:ring-primary focus:border-primary">
                     <option value="draft">Draft</option>
                     <option value="published">Published</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Category</label>
-                  <select name="category" value={formData.category || 'tour'} onChange={handleChange} className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Category</label>
+                  <select name="category" value={formData.category || 'tour'} onChange={handleChange} className="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:ring-primary focus:border-primary">
                     <option value="tour">Tour</option>
                     <option value="stay">Stay</option>
                     <option value="volunteer">Volunteer</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Partner</label>
-                  <select name="partner_id" value={formData.partner_id || ''} onChange={handleChange} className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Partner</label>
+                  <select name="partner_id" value={formData.partner_id || ''} onChange={handleChange} className="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:ring-primary focus:border-primary">
                     <option value="">Direct (No Partner)</option>
                     {partners.map(partner => (
                       <option key={partner.id} value={partner.id}>{partner.name}</option>
@@ -216,40 +216,40 @@ const ListingFormPage: React.FC = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Price (USD)</label>
-                  <input type="number" name="price" value={formData.price || 0} onChange={handleChange} className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary" />
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Price (USD)</label>
+                  <input type="number" name="price" value={formData.price || 0} onChange={handleChange} className="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:ring-primary focus:border-primary" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Location</label>
-                  <input type="text" name="location" value={formData.location || ''} onChange={handleChange} className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary" />
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Location</label>
+                  <input type="text" name="location" value={formData.location || ''} onChange={handleChange} className="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:ring-primary focus:border-primary" />
                 </div>
               </div>
             </div>
           </div>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 bg-white p-8 rounded-lg shadow-md">
-            <h2 className="text-xl font-semibold text-gray-800 mb-6">Availability</h2>
-            <p className="text-sm text-gray-500 mb-4">Click on dates to toggle their availability for this listing.</p>
+          <div className="lg:col-span-2 bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md">
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-6">Availability</h2>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">Click on dates to toggle their availability for this listing.</p>
             <AdminAvailabilityCalendar selectedDates={formData.availability as string[] || []} onSelectionChange={handleAvailabilityChange} />
           </div>
-          <div className="lg:col-span-1 bg-white p-8 rounded-lg shadow-md">
-            <h2 className="text-xl font-semibold text-gray-800 mb-6">Images</h2>
+          <div className="lg:col-span-1 bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md">
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-6">Images</h2>
             <div 
               onDrop={onDrop} 
               onDragOver={(e) => e.preventDefault()}
-              className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md cursor-pointer hover:border-primary"
+              className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 dark:border-gray-600 border-dashed rounded-md cursor-pointer hover:border-primary"
             >
               <div className="space-y-1 text-center">
                 <UploadCloud className="mx-auto h-12 w-12 text-gray-400" />
-                <div className="flex text-sm text-gray-600">
-                  <label htmlFor="file-upload" className="relative cursor-pointer bg-white rounded-md font-medium text-primary hover:text-red-500 focus-within:outline-none">
+                <div className="flex text-sm text-gray-600 dark:text-gray-400">
+                  <label htmlFor="file-upload" className="relative cursor-pointer bg-white dark:bg-gray-800 rounded-md font-medium text-primary hover:text-red-500 focus-within:outline-none">
                     <span>Click to upload</span>
                     <input id="file-upload" name="file-upload" type="file" className="sr-only" multiple accept="image/*" onChange={handleFileChange} />
                   </label>
                   <p className="pl-1">or drag and drop</p>
                 </div>
-                <p className="text-xs text-gray-500">Max 10 images</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Max 10 images</p>
               </div>
             </div>
             <div className="mt-4 grid grid-cols-3 gap-4">
@@ -269,8 +269,8 @@ const ListingFormPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="mt-8 flex justify-end bg-white p-4 rounded-lg shadow-md sticky bottom-0">
-          <button type="button" onClick={() => navigate('/listings')} className="mr-4 px-6 py-2 border border-gray-300 rounded-md text-sm font-medium hover:bg-gray-50">Cancel</button>
+        <div className="mt-8 flex justify-end bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md sticky bottom-0 dark:border-t dark:border-gray-700">
+          <button type="button" onClick={() => navigate('/listings')} className="mr-4 px-6 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700">Cancel</button>
           <button type="submit" disabled={saving} className="bg-primary text-white px-6 py-2 rounded-lg flex items-center hover:brightness-90 disabled:opacity-50">
             {saving ? <Loader className="animate-spin h-5 w-5 mr-2" /> : <Save className="h-5 w-5 mr-2" />}
             {saving ? 'Saving...' : 'Save Listing'}
