@@ -6,6 +6,7 @@ import { AuthProvider } from './context/AuthContext';
 import { SettingsProvider, useSettings } from './context/SettingsContext';
 import { CurrencyProvider } from './context/CurrencyContext';
 import { ThemeProvider } from './context/ThemeContext';
+import { WishlistProvider } from './context/WishlistContext'; // Import WishlistProvider
 
 import Header from './components/Layout/Header';
 import Footer from './components/Layout/Footer';
@@ -81,7 +82,9 @@ const AdminRoutes = () => (
 const PublicSite = () => (
   <SettingsProvider>
     <CurrencyProvider>
-      <ThemedPublicRoutes />
+      <WishlistProvider> {/* Wrap routes with WishlistProvider */}
+        <ThemedPublicRoutes />
+      </WishlistProvider>
     </CurrencyProvider>
   </SettingsProvider>
 );
