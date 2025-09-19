@@ -8,7 +8,7 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview --host",
-    "start": "yarn dev"
+    "start": "vite --host"
   },
   "dependencies": {
     "@faker-js/faker": "^10.0.0",
